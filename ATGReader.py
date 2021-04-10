@@ -1,3 +1,10 @@
+import utils
+import sys  
+import os
+
+sys.path.append(os.path.abspath(os.path.join("AFD/AFN")))
+from BuilderEnum import BuilderEnum
+
 class ATGReader():
     """
     Instantiates the ATG info extractor class.
@@ -15,48 +22,23 @@ class ATGReader():
 
 
     def read(self, skip=True):
-        tmp = ""
-        quoteCounter = 0
-        while self.counter < len(self.words):
-            """
-            If we are inside " we will have an odd number
-            """ 
-            if self.words[self.counter] == '"':
-                quoteCounter += 1
+       for line in self.words:
+            individual = line.split()
+            if len(individual) > 0:
+                if individual[0] == "COMPILER":
+                #execute compiler name module
+                    self.compiler_name(self.words[self.counter])
+
+                elif individual[0] == "CHARACTERS":
+                    self.get_characters()
                 
-            """
-            If the current char is " " or  "\n" and we already had a word, and we want to skip the rest... 
-            """
-            elif (self.words[self.counter] == " " or self.words[self.counter] == "\n") and len(tmp) > 0 and skip:
-                break
-            """
-            If the current char is " " or "\n", we just ignore it.
-            """
-            elif(self.words[self.counter] == " " or self.words[self.counter] == "\n"):
-                pass
-            """
-            If we dont want to skip the word we already have and we find a "."
-            """
-            elif not skip and self.words[self.counter] == ".":
-                """
-                If are at the end of the quotation eg: "hola". We found an end
-                """
-                if quoteCounter % 2 == 0:
-                    tmp += self.words[self.counter]
-                    break
-                """
-                If not we just add 
-                """
-                else: 
-                    tmp += self.words[self.counter]
-                    
-            else:
-                """
-                Lets add! 
-                """
-                tmp += self.words[self.counter]
-            self.counter += 1
-        return tmp
+                elif individual[0] == "TOKENS":
+                    self.get_tokens(self.words[self.counter])
+
+                #probably a comment or sth else ...
+
+
+            self.counter += 1 
 
     """
     Builds and gets properties of the ATG. e.g: compiler, characters...
@@ -87,8 +69,8 @@ class ATGReader():
     PARAMS: 
         self -> the class.
     """
-    def compiler_name(self):
-        self.compilerName = self.read()
+    def compiler_name(self, line):
+        self.compilerName = line.split()[1]
 
 
     """
@@ -97,25 +79,106 @@ class ATGReader():
         self-> the class.
     """
     def get_characters(self):
-        line = ""
-        while True: 
-            buffer = self.read(skip=False)
-
-            if buffer == "KEYWORDS":
-                self.counter -= 8
-                break
-            line += buffer
-            
-            #grammar checking
-            if line[-1] == "." and line[-2] != "." and "=" in line:
-                sentence = line.split("=") # 0 is left hand, 1 is right hand. Relative to = char
-                self.characters[sentence[0]] = sentence[1]
-                line =  ""
-            else:
-                print("Grammar CHARS error nearby char: ", self.counter)
-                break
-
     
+        #revisamos donde estamos
+        currentLine = self.words[self.counter]
+        #mientras no lleguemos a seccion de tokens...
+        while self.counter < len(self.words):
+            self.counter += 1
+
+            #limpiamos de caracteres vacios al inicio o final
+            currentLine = self.words[self.counter].strip()
+
+            if len(currentLine) > 0:
+                
+            
+                if currentLine.split()[0] == "TOKENS":
+                    break
+                
+                #revisamos que todo nice en gramatica, que exista un igual y que el final sea un . 
+                if "=" in currentLine and currentLine[-1] == ".": 
+                    split = currentLine.split("=")
+                    
+                    #removemos espacios... 
+                    cleanSplit = []
+                    for word in split:
+                        cleanSplit.append(word.strip())
+
+                    #agregamos    
+                    self.characters[cleanSplit[0]] = cleanSplit[1]
+                else:
+                    print("Grammar CHARS error in line: ", self.counter)
+                    break
+
+        print("Finished CHARACTERS: Syntax is correct up to here :)")
+        #here we should call function that finishes to clean up stuff like "hola": '"asdad" .'
+        self.char_to_regex()
+
+
+    def char_to_regex(self):
+        keys = self.characters.keys()
+        new_chars = {}
+        for key in keys:
+            val = self.characters[key]
+            
+
+            
+            arr_val = val.split(" ")
+            #es un compuesto
+            if len(arr_val) > 1:
+                sentence = ""
+                for operator in arr_val:
+                    res = self.identify_char(operator)
+                    if res:
+                        sentence += res
+                    else:
+                        sentence += operator
+
+                print("complex operator", sentence)
+
+            #es un simple
+            else:
+            #cleaning process & convertion 
+
+                
+                val = self.clean_char(val)
+                self.characters[key]=self.to_regex(val, 1)
+
+    def identify_char(self, chars):
+        keys = self.characters.keys()
+        for key in keys:
+            if chars == key:
+                return self.characters[key]
+
+        #si esta vacio, nos ingresaron una variable no existente, error.
+        positions = utils.find_all_positions(chars, '"')
+        if len(positions) > 0:
+            if positions[0] == 0:
+                positions[0] = 1
+            chars = chars[positions[0]:positions[-1]]
+            return self.to_regex(chars, 1)
+        else:
+            print("Error at line, ", self.counter)
+
+        
+    def clean_char(self, toClean):
+        return toClean.replace('"', "")[:-1]
+
+
+    def to_regex(self, string, case):
+        if case == 1:
+            sentence = ""
+            for char in string:
+                sentence += char
+                sentence += BuilderEnum.OR.value
+
+            return "("+sentence[:-1]+")"
+                
+        
+
+
+
+        
     def get_keywords(self):
         line = ""
         while True:
