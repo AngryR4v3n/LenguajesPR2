@@ -10,3 +10,5 @@ class BuilderEnum(Enum):
     RIGHT_PARENS = ")"
     CONCAT = "."
     ASK = "?"
+
+    ALL_OPERATORS = [KLEENE, PLUS, OR, CONCAT, ASK]

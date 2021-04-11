@@ -7,7 +7,8 @@ class Builder():
         self.instruction = iter(instruction)
         self.next_char()
         self.tokensArr =[]
-        self.operators = ["*", "+", "|", ".", "?"]
+        print("ALL", ALL_OPERATORS.value)
+        self.operators = ALL_OPERATORS.value
         self.parens = ["(", ")"]
         self.enums = BuilderEnum
         

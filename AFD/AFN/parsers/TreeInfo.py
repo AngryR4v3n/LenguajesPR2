@@ -1,24 +1,24 @@
-
+from BuilderEnum import BuilderEnum
 def compute_first(tree):
-    if(tree.root == "|"):
+    if(tree.root == BuilderEnum.OR.value):
         arr1 = tree.left.first_pos 
         arr2 = tree.right.first_pos
         unified = union(arr1, arr2)
         tree.first_pos = unified
         return unified
 
-    elif(tree.root == "." and (is_nullable(tree.left))):
+    elif(tree.root == BuilderEnum.CONCAT.value and (is_nullable(tree.left))):
         arr1 = tree.left.first_pos 
         arr2 = tree.right.first_pos
         unified = union(arr1, arr2)
         tree.first_pos = unified
         return unified
-    elif(tree.root == "." and not (is_nullable(tree.left))):
+    elif(tree.root == BuilderEnum.CONCAT.value and not (is_nullable(tree.left))):
         arr1 = tree.left.first_pos 
         tree.first_pos = arr1
         return arr1
 
-    elif(tree.root == "*"):
+    elif(tree.root == BuilderEnum.KLEENE.value):
         arr1 = tree.left.first_pos
         tree.first_pos = arr1
         return arr1
@@ -31,14 +31,14 @@ def compute_first(tree):
         return [tree.number]
 
 def compute_last(tree):
-    if(tree.root == "|"):
+    if(tree.root == BuilderEnum.OR.value):
         arr1 = tree.left.last_pos 
         arr2 = tree.right.last_pos
         unified = union(arr1, arr2)
         tree.last_pos = unified
         return unified
 
-    elif(tree.root == "." and (is_nullable(tree.right))):
+    elif(tree.root == BuilderEnum.CONCAT.value and (is_nullable(tree.right))):
         arr1 = tree.left.last_pos 
         arr2 = tree.right.last_pos
         unified = union(arr1, arr2)
@@ -49,7 +49,7 @@ def compute_last(tree):
         tree.last_pos = arr1
         return arr1
 
-    elif(tree.root == "*"):
+    elif(tree.root == BuilderEnum.KLEENE.value):
         arr1 = tree.left.last_pos 
         tree.last_pos = arr1
         return arr1
@@ -72,19 +72,19 @@ def union( arr1, arr2):
 
 def is_nullable( node):
     if node:
-        if node.root == "*":
+        if node.root == BuilderEnum.KLEENE.value:
             node.nullable = True
             return True
         elif node.root == "&":
             node.nullable = True
             return True
-        elif node.root == "|":
+        elif node.root == BuilderEnum.OR.value:
             left = node.left.nullable
             right = node.right.nullable
             node.nullable = left or right
             return left or right
 
-        elif node.root == ".":
+        elif node.root == BuilderEnum.CONCAT.value:
             left = node.left.nullable
             right = node.right.nullable
             node.nullable = left and right

@@ -135,6 +135,7 @@ class ATGReader():
                         sentence += operator
 
                 print("complex operator", sentence)
+                self.characters[key] = sentence
 
             #es un simple
             else:
@@ -150,7 +151,7 @@ class ATGReader():
             if chars == key:
                 return self.characters[key]
 
-        #si esta vacio, nos ingresaron una variable no existente, error.
+        #si posiciones esta vacia, es un operador. 
         positions = utils.find_all_positions(chars, '"')
         if len(positions) > 0:
             if positions[0] == 0:
@@ -158,7 +159,7 @@ class ATGReader():
             chars = chars[positions[0]:positions[-1]]
             return self.to_regex(chars, 1)
         else:
-            print("Error at line, ", self.counter)
+            return chars
 
         
     def clean_char(self, toClean):

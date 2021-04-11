@@ -79,7 +79,7 @@ class Postfixer:
                 index, last = self.get_symbol(expr[:i])
                 
                 #left operator . left operator*
-                add= last + last +"*"
+                add= last + last +BuilderEnum.KLEENE.value
                 decider = expr[:i]
                 if decider[-1] == ")":
                     new += add
@@ -93,7 +93,7 @@ class Postfixer:
                 index, last = self.get_symbol(expr[:i])
                 
                 #left operator (r | e) 
-                add="(" + last + "|" + "&"")"
+                add="(" + last + BuilderEnum.OR.value + "&"")"
                 decider = expr[:i]
                 if decider[-1] == ")":
                     new += add
@@ -127,34 +127,34 @@ class Postfixer:
             if(self.is_operand(expr[i]) and self.is_operand(expr[i+1])):
                 
                 posToInsert.append(i)
-            if(expr[i] == "*" and expr[i+1] == "*"):
+            if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == BuilderEnum.KLEENE.value):
                 isOk = False
             if len(pushStack)>0:
                 last_elem = pushStack[-1]
-                if last_elem == "*" and expr[i] == "*":
+                if last_elem == BuilderEnum.KLEENE.value and expr[i] == BuilderEnum.KLEENE.value:
                     isOk = False
-            if(expr[i] == "*" and expr[i+1] == ")"):
+            if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == ")"):
                 pushStack.append(")")
-                pushStack.append("*")
+                pushStack.append(BuilderEnum.KLEENE.value)
             
             if(expr[i] == "(") and (i != 0) and self.is_operand(expr[i-1]) and self.is_operand(expr[i+1]):
                
                 posToInsert.append(i-1)
 
-            if((expr[i] == "*" or expr[i] == "+") and self.is_operand(expr[i+1]) and (expr[i+1] != "(" or expr[i+1] != ")")):
+            if((expr[i] == BuilderEnum.KLEENE.value or expr[i] == BuilderEnum.PLUS.value) and self.is_operand(expr[i+1]) and (expr[i+1] != "(" or expr[i+1] != ")")):
                 
                 posToInsert.append(i)
 
-            if((expr[i] == "*" or expr[i] == "+") and (expr[i-1] == ")" and expr[i+1]) == "("):
+            if((expr[i] == BuilderEnum.KLEENE.value or expr[i] == BuilderEnum.PLUS.value) and (expr[i-1] == ")" and expr[i+1]) == "("):
                 posToInsert.append(i)
 
-            if(expr[i] == "*" and expr[i+1] == "("):
+            if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == "("):
                 posToInsert.append(i)
 
             if(expr[i] == ")" and expr[i+1] == "("):
                 posToInsert.append(i)
 
-            if(expr[i] == "." and (not self.is_operand(expr[i+1]))):
+            if(expr[i] == BuilderEnum.CONCAT.value and (not self.is_operand(expr[i+1]))):
                 fixed += "&"
 
             if(isOk):

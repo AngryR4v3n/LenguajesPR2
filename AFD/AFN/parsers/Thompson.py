@@ -62,7 +62,7 @@ class Thompson:
             elif currentToken.get_type() != "SYMBOL":
 
                 #regla #3: OR
-                if currentToken.get_type() == "|":
+                if currentToken.get_type() == BuilderEnum.OR.value:
                     #sacamos del stack
                     nfa2 = self.opStack.pop()
                     
@@ -96,7 +96,7 @@ class Thompson:
                     self.opStack.add(or_nfa)
                 
                 #REGLA KLEENE
-                if currentToken.get_type() == "*":
+                if currentToken.get_type() == BuilderEnum.KLEENE.value:
                     nfa = self.opStack.pop()
                     
                     #encontramos estados finales e iniciales:
@@ -133,7 +133,7 @@ class Thompson:
                     #print("DONE KLEENE to \n", nfa)
                     self.opStack.add(kleene_nfa)
 
-                if currentToken.get_type() == "+":
+                if currentToken.get_type() == BuilderEnum.PLUS.value:
                     nfa = self.opStack.pop()
                     
                     #encontramos estados finales e iniciales:

@@ -34,7 +34,7 @@ class AFD:
             
             if tokens[i].get_value() == "&":
                 add = False
-                if (tokens[i+1].get_type() == "." or tokens[i+1].get_type() == "|"):
+                if (tokens[i+1].get_type() == BuilderEnum.CONCAT.value or tokens[i+1].get_type() == BuilderEnum.OR.value):
                     popNext = True
                     continue
                     

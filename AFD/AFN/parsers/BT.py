@@ -22,7 +22,7 @@ class BTree:
 
     def compute_followpos(self, table):
         print(table)
-        if self.root == ".":
+        if self.root == BuilderEnum.CONCAT.value:
             left = self.left.last_pos
             right = self.right.first_pos
            
@@ -34,7 +34,7 @@ class BTree:
 
                        
 
-        elif self.root == "*":
+        elif self.root == BuilderEnum.KLEENE.value:
             left = self.left.last_pos
             right = self.left.first_pos
            
@@ -81,7 +81,7 @@ def generate_tree(tokensArr):
             counter += 1
 
         elif(token.get_type() != "SYMBOL"):
-            if token.get_type() == "*":
+            if token.get_type() == BuilderEnum.KLEENE.value:
                 uniOp = stackOp.pop()
                 tree = BTree()
                 tree.root = token.get_type()
