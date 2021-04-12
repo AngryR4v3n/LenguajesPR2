@@ -184,7 +184,7 @@ class Thompson:
                     self.opStack.add(plus_nfa)
 
 
-                if currentToken.get_type() == ".":
+                if currentToken.get_type() == BuilderEnum.CONCAT.value:
                     nfa2 = self.opStack.pop()
                     nfa1 = self.opStack.pop()
 

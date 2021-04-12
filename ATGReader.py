@@ -84,14 +84,12 @@ class ATGReader():
         currentLine = self.words[self.counter]
         #mientras no lleguemos a seccion de tokens...
         while self.counter < len(self.words):
+            
             self.counter += 1
-
             #limpiamos de caracteres vacios al inicio o final
             currentLine = self.words[self.counter].strip()
 
             if len(currentLine) > 0:
-                
-            
                 if currentLine.split()[0] == "TOKENS":
                     break
                 
@@ -104,6 +102,12 @@ class ATGReader():
                     for word in split:
                         cleanSplit.append(word.strip())
 
+                    #chequeamos que si es CHAR(), lo pasamos de una..
+                    if cleanSplit[1].find("CHR(") == 0:
+                        converted = self.chr_interpreter(cleanSplit[1])
+                        cleanSplit[1] = converted
+
+
                     #agregamos    
                     self.characters[cleanSplit[0]] = cleanSplit[1]
                 else:
@@ -114,36 +118,70 @@ class ATGReader():
         #here we should call function that finishes to clean up stuff like "hola": '"asdad" .'
         self.char_to_regex()
 
+    def chr_interpreter(self, word):
+        init = word.find("(") + 1 
+        final = word.find(")")
+        if init > 0 and final > -1:
+            try:
+                numb = int(word[init:final])
+            except ValueError:
+                print("Incorrect grammar for CHAR") 
 
+            return chr(numb)
     def char_to_regex(self):
         keys = self.characters.keys()
         new_chars = {}
         for key in keys:
-            val = self.characters[key]
-            
-
-            
+            val = self.characters[key] 
             arr_val = val.split(" ")
             #es un compuesto
             if len(arr_val) > 1:
-                sentence = ""
-                for operator in arr_val:
-                    res = self.identify_char(operator)
-                    if res:
-                        sentence += res
-                    else:
-                        sentence += operator
-
-                print("complex operator", sentence)
+                sentence = self.evaluate_complex(arr_val)
                 self.characters[key] = sentence
 
             #es un simple
             else:
             #cleaning process & convertion 
-
-                
                 val = self.clean_char(val)
                 self.characters[key]=self.to_regex(val, 1)
+
+
+    def evaluate_complex(self, array):
+        operations = ["+", "-"]
+        stack = []
+        toBeDone = []
+        sentence = ""
+        for operator in array:
+            if operator not in operations:
+                res = self.identify_char(operator)
+                stack.append(res)
+                
+            else:   
+                toBeDone.append(operator)
+
+        while len(toBeDone) > 0:
+            second = stack.pop()
+            first = stack.pop()
+            op = toBeDone.pop()
+            sentence += first
+            
+            if op == "-":
+                firstSet = set(first)
+                secondSet = set(second)
+
+                sentence = firstSet - secondSet
+                sentence = sentence.pop()
+                
+            else: 
+                sentence += BuilderEnum.CONCAT.value
+                sentence += second
+                stack.append(sentence)
+
+        return sentence
+                
+            
+            
+
 
     def identify_char(self, chars):
         keys = self.characters.keys()
@@ -157,7 +195,8 @@ class ATGReader():
             if positions[0] == 0:
                 positions[0] = 1
             chars = chars[positions[0]:positions[-1]]
-            return self.to_regex(chars, 1)
+            #return self.to_regex(chars, 1)
+            return chars
         else:
             return chars
 
@@ -174,11 +213,6 @@ class ATGReader():
                 sentence += BuilderEnum.OR.value
 
             return "("+sentence[:-1]+")"
-                
-        
-
-
-
         
     def get_keywords(self):
         line = ""

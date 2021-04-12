@@ -5,7 +5,7 @@ COMPILER C
 CHARACTERS
   letter   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz". 
   digit    = "0123456789".
-  hexdigit = digit + "ABCDEFabcdef".
+  hexdigit = "ABC1" - "ABCDEFabcdef".
   tab      = \t.
   eol      = eol.
   files    = letter + digit + ":\\.".
