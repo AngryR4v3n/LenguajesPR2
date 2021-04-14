@@ -1,25 +1,25 @@
-COMPILER C
+COMPILER Ejemplo
+(.
+/*--------------Scanner Specification----------*/
+.)
 
-/* An attempt to describe a subset of C */
+CHARACTERS 
 
-CHARACTERS
-  letter   = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz". 
-  digit    = "0123456789".
-  hexdigit = "ABC1" - "ABCDEFabcdef".
-  tab      = \t.
-  eol      = eol.
-  files    = letter + digit + ":\\.".
-  chars    = CHR(255) - "'".
-  strings  = CHR(255).
-  macros   = ANY - eol.
+letter = "ab".
+digit= "0123456789".
+hexdigit= digit+"ABCDEF".
+
+KEYWORDS
+
+if="if".
+while="while".
 
 TOKENS
-  identifier = ( "_" | letter) { "_" | letter | digit } .
-  number     = digit { digit } [ "." { digit }] [ "U" | "u" | "L" | "l" ] .
-  hexnumber  = "0" ( "x" | "X" ) hexdigit { hexdigit } [ "U" | "u" | "L" | "l" ] .
-  string     = '"' { strings } '"' .
-  char       = "'" [ "\\" ] chars "'" .
-  library    = "<" files { files } ">" .
 
-COMMENTS FROM "/*" TO "*/"
+id= letter{letter} EXCEPT KEYWORDS.
+number = digit{digit}.
+hexnumber = hexdigit{hexdigit}"(H)".
 
+PRODUCTIONS
+
+END Ejemplo

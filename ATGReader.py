@@ -21,19 +21,23 @@ class ATGReader():
         self.counter = 0
 
 
-    def read(self, skip=True):
+    def read(self):
        for line in self.words:
             individual = line.split()
             if len(individual) > 0:
                 if individual[0] == "COMPILER":
-                #execute compiler name module
+                    #execute compiler name module
                     self.compiler_name(self.words[self.counter])
 
                 elif individual[0] == "CHARACTERS":
-                    self.get_characters()
+                    self.get_characters("CHARACTERS", "KEYWORDS")
+
+                elif individual[0] == "KEYWORDS":
+                    self.get_characters("KEYWORDS", "TOKENS")
                 
                 elif individual[0] == "TOKENS":
-                    self.get_tokens(self.words[self.counter])
+                    #self.get_tokens(self.words[self.counter])
+                    print("doofus")
 
                 #probably a comment or sth else ...
 
@@ -46,22 +50,7 @@ class ATGReader():
         self -> the class
     """
     def build_atg(self):
-        while True:
-            tmp = self.read()
-            if tmp == "COMPILER":
-                self.compiler_name()
-            elif tmp == "CHARACTERS":
-                self.get_characters()
-            elif tmp == "KEYWORDS":
-                self.get_keywords()
-            elif tmp == "TOKENS":
-                self.get_tokens()
-            elif tmp == "PRODUCTIONS":
-                self.productions()
-            elif tmp == "END":
-                self.end()
-                break
-
+        self.read()
     
     
     """
@@ -74,49 +63,83 @@ class ATGReader():
 
 
     """
-    Gets the terminals from the ATG, and modifies character obj property.
+    Gets the characters and interprets CHR() statements, replaces to the actual value
     PARAMS:
         self-> the class.
     """
-    def get_characters(self):
+    def get_characters(self, parsing, limit):
     
+        elapsed_cycles = 0
         #revisamos donde estamos
         currentLine = self.words[self.counter]
         #mientras no lleguemos a seccion de tokens...
         while self.counter < len(self.words):
             
             self.counter += 1
+            elapsed_cycles += 1
             #limpiamos de caracteres vacios al inicio o final
             currentLine = self.words[self.counter].strip()
 
             if len(currentLine) > 0:
-                if currentLine.split()[0] == "TOKENS":
-                    break
                 
-                #revisamos que todo nice en gramatica, que exista un igual y que el final sea un . 
-                if "=" in currentLine and currentLine[-1] == ".": 
-                    split = currentLine.split("=")
+                if currentLine.split()[0] == limit:
+                    self.counter = self.counter - elapsed_cycles
+                    break
+                    #chequeamos estructura gramatical
                     
-                    #removemos espacios... 
-                    cleanSplit = []
-                    for word in split:
-                        cleanSplit.append(word.strip())
+                result = self.line_grammar_check(currentLine)
 
-                    #chequeamos que si es CHAR(), lo pasamos de una..
-                    if cleanSplit[1].find("CHR(") == 0:
-                        converted = self.chr_interpreter(cleanSplit[1])
-                        cleanSplit[1] = converted
+                if result != None:
 
+                    #agregamos segun sea el caso
+                    if parsing == "CHARACTERS":    
+                        self.characters[result[0]] = result[1]
 
-                    #agregamos    
-                    self.characters[cleanSplit[0]] = cleanSplit[1]
+                    elif parsing == "TOKENS":
+                        self.tokens[result[0]] = result[1]
+
+                    elif parsing == "KEYWORDS":
+                        self.keywords[result[0]] = result[1]
                 else:
-                    print("Grammar CHARS error in line: ", self.counter)
+                    print(f"Grammar error in {parsing} section - in line: ", self.counter)
                     break
 
-        print("Finished CHARACTERS: Syntax is correct up to here :)")
-        #here we should call function that finishes to clean up stuff like "hola": '"asdad" .'
-        self.char_to_regex()
+        print(f"Finished {parsing}: Syntax is correct up to here :)")
+        
+        if parsing == "CHARACTERS":
+            self.char_to_regex()
+
+        elif parsing == "TOKENS":
+            print("doofus")
+            
+        elif parsing == "KEYWORDS":
+            self.keyword_to_regex()
+
+
+    def line_grammar_check(self, currentLine):
+        #revisamos que todo nice en gramatica, que exista un igual y que el final sea un . 
+        if "=" in currentLine and currentLine[-1] == "." and currentLine != "": 
+            split = currentLine.split("=")
+            
+            #removemos espacios... 
+            cleanSplit = []
+            for word in split:
+                cleanSplit.append(word.strip())
+
+            #chequeamos que si es CHAR(), lo pasamos de una..
+            if cleanSplit[1].find("CHR(") > -1:
+                converted = self.chr_interpreter(cleanSplit[1])
+                cleanSplit[1] = converted
+
+            if cleanSplit[1][-1] == ".":
+                cleanSplit[1] = cleanSplit[1][0:-1]
+
+        else:
+            return None
+
+        return cleanSplit
+
+        
 
     def chr_interpreter(self, word):
         init = word.find("(") + 1 
@@ -125,28 +148,86 @@ class ATGReader():
             try:
                 numb = int(word[init:final])
             except ValueError:
-                print("Incorrect grammar for CHAR") 
+                print("Incorrect grammar for CHR() expression at", self.counter) 
 
             return chr(numb)
+    """
+    String analyzer, converts string to regex expression. Here we dont have any CHR(), only strings
+    INPUT: character dictionary *half cleansed*
+    """            
     def char_to_regex(self):
         keys = self.characters.keys()
-        new_chars = {}
+        
         for key in keys:
             val = self.characters[key] 
-            arr_val = val.split(" ")
-            #es un compuesto
-            if len(arr_val) > 1:
-                sentence = self.evaluate_complex(arr_val)
-                self.characters[key] = sentence
+            separated = self.operands_identifier(val)
+            sentence = self.evaluate_characters(separated)
+            print("Processed CHAR", sentence)
+            regex = self.to_regex(sentence, 1)
+            self.characters[key] = regex
+            print("Final CHAR REGEX", regex)
 
-            #es un simple
-            else:
-            #cleaning process & convertion 
-                val = self.clean_char(val)
-                self.characters[key]=self.to_regex(val, 1)
+            
+
+    def keyword_to_regex(self):
+        keys = self.keywords.keys()
+
+        for key in keys:
+            val = self.keywords[key]
+            print("Processed KEYWORDS", val)
+            regex = self.to_regex(val, 2)
+            print("Final KEYWORDS", regex)
+
+            
+
+    def operands_identifier(self, value):
+        count = 0
+        opMode = False
+        operators = ["+", "-"]
+        toBeIdentified = []
+        word = ""
+        string = ""
+        for char in value:
+            if char == '"':
+                count += 1
+            if count % 2 == 0 and char != "." and char not in operators and char != " ":
+                word += char
+            if count % 2 != 0:
+                string += char
+
+            if char in operators:
+                toBeIdentified.append(char)
+                if string != "" and string != '"':
+                    string += '"'
+                    toBeIdentified.append(string)
+                
+                if word != "" and word != '"':
+                    toBeIdentified.append(word)
+                
+                word = ""
+                string = ""
+
+            
+                
+        if string != "" and string != '"':
+                    string += '"'
+                    toBeIdentified.append(string)
+        if word != "" and word != '"':
+            toBeIdentified.append(word)
+                
+        return toBeIdentified
+
+            
 
 
-    def evaluate_complex(self, array):
+            
+
+    """
+    Here we evaluate strings that contain  op + op2. We evaluate and return a string 'abc'
+    INPUT: array of operands
+    OUTPUT: sentence already processed
+    """
+    def evaluate_characters(self, array):
         operations = ["+", "-"]
         stack = []
         toBeDone = []
@@ -154,15 +235,20 @@ class ATGReader():
         for operator in array:
             if operator not in operations:
                 res = self.identify_char(operator)
+                res.replace('"', "")
                 stack.append(res)
                 
             else:   
                 toBeDone.append(operator)
+        
+        #si es unitario, solo expulsamos lo que procesamos
+        if len(toBeDone) == 0:
+            return stack.pop()
 
         while len(toBeDone) > 0:
-            second = stack.pop()
-            first = stack.pop()
-            op = toBeDone.pop()
+            second = stack.pop().strip().replace('"', "")
+            first = stack.pop().strip().replace('"', "")
+            op = toBeDone.pop().strip()
             sentence += first
             
             if op == "-":
@@ -179,10 +265,11 @@ class ATGReader():
 
         return sentence
                 
-            
-            
 
-
+    """
+    Identifies if we are given a variable, it will replace that value
+    x = 'ola' -> 'ola'
+    """
     def identify_char(self, chars):
         keys = self.characters.keys()
         for key in keys:
@@ -200,38 +287,40 @@ class ATGReader():
         else:
             return chars
 
-        
+    """
+    Deletes .  and the " 
+    """
     def clean_char(self, toClean):
         return toClean.replace('"', "")[:-1]
 
-
+    """
+    Given a string like abc -> (a|b|c)
+    """
     def to_regex(self, string, case):
         if case == 1:
             sentence = ""
-            for char in string:
-                sentence += char
-                sentence += BuilderEnum.OR.value
+            notToAdd = [")", "(", BuilderEnum.OR.value, "."]
+            for i in range(len(string) - 1):
+                sentence += string[i]
+                if string[i+1] not in notToAdd and string[i] not in notToAdd:
+                    
+                    sentence += BuilderEnum.OR.value
+                    
+            
+            sentence += string[-1]
 
-            return "("+sentence[:-1]+")"
+        elif case == 2:
+            sentence = ""
+            for i in range(len(string)):
+                sentence += string[i]
+                #no agrega ni al ultimo ni al primer valor
+                if i != 0 and len(string) - i > 2:
+                    sentence += BuilderEnum.CONCAT.value
+                    
+                
+
+        return sentence
         
-    def get_keywords(self):
-        line = ""
-        while True:
-            buffer = self.read()
-            if buffer == "TOKENS":
-                self.counter -= 6
-                break
-            line += buffer
-
-            #grammar checking
-            if line[-1] == "." and "=" in line:
-                sentence = line.split("=")
-                self.keywords[sentence[0]] = sentence[1]
-                line = ""
-            else:
-                print("Grammar KEY error nearby char: ", self.counter)
-                break
-
     
     def get_tokens(self):
         line = ""
