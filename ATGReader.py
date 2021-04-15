@@ -180,7 +180,8 @@ class ATGReader():
         for key in keys:
             val = self.tokens[key]
             print("Processed TOKENS", val)
-            x = utils.operands_identifier_v2(val)
+            separated = utils.operands_identifier_v2(val)
+            sentence = utils.evaluate_characters(separated, self.characters)
             #regex = self.to_regex(val, 3)
 
     
