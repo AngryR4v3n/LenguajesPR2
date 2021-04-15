@@ -16,11 +16,13 @@ class ATGReader():
         self.characters = {}
         self.keywords = {}
         self.productions = []
-        self.tokens = []
+        self.tokens = {}
         self.compilerName = ""
         self.counter = 0
 
-
+    """
+    Gets called to start analyzing the ATG file, reads line per line checking first word of each line
+    """
     def build_atg(self):
        for line in self.words:
             individual = line.split()
@@ -103,12 +105,12 @@ class ATGReader():
             self.char_to_regex()
 
         elif parsing == "TOKENS":
-            print("doofus")
+            self.tokens_to_regex()
             
         elif parsing == "KEYWORDS":
             self.keyword_to_regex()
 
-
+    
     def line_grammar_check(self, currentLine):
         #revisamos que todo nice en gramatica, que exista un igual y que el final sea un . 
         if "=" in currentLine and currentLine[-1] == "." and currentLine != "": 
@@ -169,8 +171,17 @@ class ATGReader():
         for key in keys:
             val = self.keywords[key]
             print("Processed KEYWORDS", val)
-            regex = self.to_regex(val, 2)
+            regex = self.to_regex(val, 2).replace('"', "")
+            self.keywords[key] = regex
             print("Final KEYWORDS", regex)
+
+    def tokens_to_regex(self):
+        keys = self.tokens.keys()
+        for key in keys:
+            val = self.tokens[key]
+            print("Processed TOKENS", val)
+            x = utils.operands_identifier_v2(val)
+            #regex = self.to_regex(val, 3)
 
     
     """

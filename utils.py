@@ -6,7 +6,9 @@ from BuilderEnum import BuilderEnum
 def find_all_positions(string, substring):
     res = [i for i in range(len(string)) if string.startswith(substring, i)]
     return res
-
+"""
+Identifies operands for + -
+"""
 def operands_identifier(value):
     count = 0
     opMode = False
@@ -43,6 +45,54 @@ def operands_identifier(value):
         toBeIdentified.append(word)
             
     return toBeIdentified
+
+
+def operands_identifier_v2(value):
+    inOp = False
+    operand = ""
+    operator = ""
+    start_op = ["{", "[", "("]
+    close_op = ["}", "]", ")"]
+    toBeIdentified = []
+    for char in value:
+        #agregamos primer operador 
+        if char in start_op:
+            inOp = True
+
+            if operand != "":
+                
+                toBeIdentified.append(operand)
+                operand = ""
+
+            
+            operator = char
+            toBeIdentified.append(operator)
+            operator = ""
+
+            
+
+        elif char in close_op:
+            inOp = False
+            if operand != "":
+                
+                toBeIdentified.append(operand)
+                operand = ""
+            
+            operator = char
+            toBeIdentified.append(operator)
+            operator = ""
+        else:
+            inOp = False
+        if not inOp and char and char not in close_op and char !=" ":
+            operand += char
+
+        if operand == "EXCEPT":
+            toBeIdentified.append(operand)
+            operand = ""
+    if len(operand) > 0:
+        toBeIdentified.append(operand)
+    return toBeIdentified
+    
 
 """
 Identifies if we are given a variable, it will replace that value
