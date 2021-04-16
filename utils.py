@@ -107,7 +107,7 @@ def to_regex(string, case):
     if case == 1:
         string = string.replace('"', "")
         sentence = ""
-        notToAdd = [")", "(", BuilderEnum.OR.value, "."]
+        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"']
         for i in range(len(string) - 1):
             sentence += string[i]
             if string[i+1] not in notToAdd and string[i] not in notToAdd:
@@ -124,6 +124,18 @@ def to_regex(string, case):
             #no agrega ni al ultimo ni al primer valor
             if i != 0 and len(string) - i > 2:
                 sentence += BuilderEnum.CONCAT.value
+
+    elif case == 3:
+        
+        sentence = ""
+        notToAdd = [BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"']
+        for i in range(len(string) - 1):
+            sentence += string[i]
+            if string[i+1] not in notToAdd and string[i] not in notToAdd:
+                
+                sentence += BuilderEnum.OR.value
+
+        sentence += string[-1]
                 
             
 
@@ -142,7 +154,7 @@ def identify_char(chars, diction):
     #si posiciones esta vacia, es un operador. Si no, es un string que hay que a|b|c.. 
     positions = find_all_positions(chars, '"')
     if len(positions) > 0:
-        chars = to_regex(chars, 1)
+        chars = to_regex(chars, 3)
     
     return chars
 
