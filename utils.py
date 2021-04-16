@@ -98,7 +98,36 @@ def operands_identifier_v2(value):
     if len(operand) > 0:
         toBeIdentified.append(operand)
     return toBeIdentified
-    
+
+
+"""
+Given a string like abc -> (a|b|c)
+"""
+def to_regex(string, case):
+    if case == 1:
+        string = string.replace('"', "")
+        sentence = ""
+        notToAdd = [")", "(", BuilderEnum.OR.value, "."]
+        for i in range(len(string) - 1):
+            sentence += string[i]
+            if string[i+1] not in notToAdd and string[i] not in notToAdd:
+                
+                sentence += BuilderEnum.OR.value
+                
+        
+        sentence += string[-1]
+
+    elif case == 2:
+        sentence = ""
+        for i in range(len(string)):
+            sentence += string[i]
+            #no agrega ni al ultimo ni al primer valor
+            if i != 0 and len(string) - i > 2:
+                sentence += BuilderEnum.CONCAT.value
+                
+            
+
+    return sentence
 
 """
 Identifies if we are given a variable, it will replace that value
@@ -110,16 +139,12 @@ def identify_char(chars, diction):
         if chars == key:
             return diction[key]
 
-    #si posiciones esta vacia, es un operador. 
+    #si posiciones esta vacia, es un operador. Si no, es un string que hay que a|b|c.. 
     positions = find_all_positions(chars, '"')
     if len(positions) > 0:
-        if positions[0] == 0:
-            positions[0] = 1
-            chars = chars[positions[0]:positions[-1]]
-        
-            return chars
-    else:
-        return chars
+        chars = to_regex(chars, 1)
+    
+    return chars
 
 """
 Here we evaluate strings that contain  op + op2. We evaluate and return a string 'abc'
@@ -127,11 +152,12 @@ INPUT: array of operands
 OUTPUT: sentence already processed
 """
 def evaluate_characters(array, mode):
-    operations = ["+", "-", "{", "[", "("]
+    operations = ["+", "-", "{", "["]
 
     stack = []
     toBeDone = []
     sentence = ""
+    result = ""
     for operator in array:
         if operator not in operations:
             res = identify_char(operator, mode)
@@ -146,27 +172,33 @@ def evaluate_characters(array, mode):
         return stack.pop()
 
     while len(toBeDone) > 0:
-        
-        op = toBeDone.pop().strip()
+        sentence = ""
+        op = toBeDone.pop(0).strip()
         
         
         if op == "-":
-            second = stack.pop().strip().replace('"', "")
-            first = stack.pop().strip().replace('"', "")
+            first = stack.pop(0).strip().replace('"', "")
+            second = stack.pop(0).strip().replace('"', "")
 
             sentence += first
             firstSet = set(first)
             secondSet = set(second)
 
             sentence = firstSet - secondSet
-            sentence = sentence.pop()
+            sentence = sentence.pop(0)
+            stack.insert(0, sentence)
             
         elif op == "+": 
-            second = stack.pop().strip().replace('"', "")
-
+            first = stack.pop(0).strip().replace('"', "")
+            second = stack.pop(0).strip().replace('"', "")
+            sentence += "("
+            sentence += first
+            sentence += ")"
             sentence += BuilderEnum.CONCAT.value
+            sentence += "("
             sentence += second
-            stack.append(sentence)
+            sentence += ")"
+            stack.insert(0,sentence)
 
         elif op == "{":
             next_op = stack.pop(0)
@@ -176,6 +208,8 @@ def evaluate_characters(array, mode):
                 next_op = stack.pop(0)
 
             sentence += BuilderEnum.KLEENE.value
+
+            stack.insert(0, sentence)
         elif op == "[":
             next_op = stack.pop(0)
             while next_op != "]":
@@ -189,29 +223,15 @@ def evaluate_characters(array, mode):
             sentence += BuilderEnum.OR.value
             sentence += next_op
 
-        elif op == "(":
-            #encontramos el "("
-            for i in range(len(array)):
-                if array[i] == "(":
-                    temp = i - 1
-                    old_op = array[temp]
-                    break
-            
-            if old_op:
-                next_op = stack.pop(0)
-                while next_op != ")":
-                    sentence = sentence + old_op + next_op 
-                    next_op = stack.pop(0)
-            else:
-                print("ERROR")
+            stack.insert(0, sentence)
 
-        while len(stack) > 0:
-            sentence += stack.pop()
+    
+    
+
+        
+
+    
+    #si queda algo son concat
 
 
-            
-
-
-
-
-        return sentence
+    return stack.pop(0)

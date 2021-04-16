@@ -159,7 +159,7 @@ class ATGReader():
             separated = utils.operands_identifier(val)
             sentence = utils.evaluate_characters(separated, self.characters)
             print("Processed CHAR", sentence)
-            regex = self.to_regex(sentence, 1)
+            regex = utils.to_regex(sentence, 1)
             self.characters[key] = regex
             print("Final CHAR REGEX", regex)
 
@@ -171,7 +171,7 @@ class ATGReader():
         for key in keys:
             val = self.keywords[key]
             print("Processed KEYWORDS", val)
-            regex = self.to_regex(val, 2).replace('"', "")
+            regex = utils.to_regex(val, 2).replace('"', "")
             self.keywords[key] = regex
             print("Final KEYWORDS", regex)
 
@@ -185,33 +185,7 @@ class ATGReader():
             #regex = self.to_regex(val, 3)
 
     
-    """
-    Given a string like abc -> (a|b|c)
-    """
-    def to_regex(self, string, case):
-        if case == 1:
-            sentence = ""
-            notToAdd = [")", "(", BuilderEnum.OR.value, "."]
-            for i in range(len(string) - 1):
-                sentence += string[i]
-                if string[i+1] not in notToAdd and string[i] not in notToAdd:
-                    
-                    sentence += BuilderEnum.OR.value
-                    
-            
-            sentence += string[-1]
-
-        elif case == 2:
-            sentence = ""
-            for i in range(len(string)):
-                sentence += string[i]
-                #no agrega ni al ultimo ni al primer valor
-                if i != 0 and len(string) - i > 2:
-                    sentence += BuilderEnum.CONCAT.value
-                    
-                
-
-        return sentence
+  
 
 
     def end(self):

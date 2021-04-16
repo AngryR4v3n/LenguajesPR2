@@ -7,7 +7,7 @@ CHARACTERS
 
 letter = "ab".
 digit= "0123456789".
-hexdigit= digit+"ABCDEF".
+hexdigit= digit+"ABCDEF"+letter.
 
 KEYWORDS
 
