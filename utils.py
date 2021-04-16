@@ -233,5 +233,15 @@ def evaluate_characters(array, mode):
     
     #si queda algo son concat
 
+    while len(stack) > 1:
+        sentence = ""
+        sentence += stack.pop(0)
+        sentence += BuilderEnum.CONCAT.value
+        sentence += "("
+        sentence += stack.pop(0)
+        sentence += ")"
+
+        stack.insert(0, sentence)
+
 
     return stack.pop(0)

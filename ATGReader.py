@@ -182,6 +182,7 @@ class ATGReader():
             print("Processed TOKENS", val)
             separated = utils.operands_identifier_v2(val)
             sentence = utils.evaluate_characters(separated, self.characters)
+            print("hmm, ", sentence)
             #regex = self.to_regex(val, 3)
 
     
