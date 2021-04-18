@@ -157,11 +157,11 @@ class ATGReader():
         for key in keys:
             val = self.characters[key] 
             separated = utils.operands_identifier(val)
-            sentence = utils.evaluate_characters(separated, self.characters)
+            sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
             regex = utils.to_regex(sentence, 1)
             self.characters[key] = regex
-            print("Final CHAR REGEX", regex)
+            print("Final CHAR", regex)
 
             
 
@@ -170,10 +170,10 @@ class ATGReader():
 
         for key in keys:
             val = self.keywords[key]
-            print("Processed KEYWORDS", val)
+            print("Processed KEYWORD", val)
             regex = utils.to_regex(val, 2).replace('"', "")
             self.keywords[key] = regex
-            print("Final KEYWORDS", regex)
+            print("Final KEYWORD", regex)
 
     def tokens_to_regex(self):
         keys = self.tokens.keys()
@@ -181,8 +181,9 @@ class ATGReader():
             val = self.tokens[key]
             print("Processed TOKENS", val)
             separated = utils.operands_identifier_v2(val)
-            sentence = utils.evaluate_characters(separated, self.characters)
-            print("hmm, ", sentence)
+            sentence = utils.evaluate_characters(separated, self.characters, True)
+            print("Final TOKEN ", sentence)
+            self.tokens[key] = sentence
             #regex = self.to_regex(val, 3)
 
     

@@ -7,10 +7,11 @@ class Builder():
         self.instruction = iter(instruction)
         self.next_char()
         self.tokensArr =[]
-        print("ALL", ALL_OPERATORS.value)
-        self.operators = ALL_OPERATORS.value
+        print("ALL", BuilderEnum.ALL_OPERATORS.value)
+        self.operators = BuilderEnum.ALL_OPERATORS.value
         self.parens = ["(", ")"]
         self.enums = BuilderEnum
+        self.counter = 0
         
         
 
@@ -32,9 +33,17 @@ class Builder():
     def generator(self):
         #iteramos sobre la instruccion
         while self.char != None:
+
+            #caso 0: tenemos un string literal! 
+            if(self.char == '"'):
+                self.counter += 1
+
+            
             
             #caso 1: tenemos un token de tipo simbolo
-            if (self.char not in self.operators and self.char not in self.parens):
+            if (self.char not in self.operators and self.char):
+
+                
                 token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
             
             #caso 2: tenemos un token de tipo operador
@@ -50,7 +59,7 @@ class Builder():
                     token = Token.Tokenizer(type_t=self.enums.CONCAT.value, value=None)
 
             #caso 3: tenemos un token de tipo parens
-            elif(self.char in self.parens):
+            elif(self.char in self.parens and self.counter % 2 == 0):
                 if self.char == self.enums.LEFT_PARENS.value:
                     token = Token.Tokenizer(type_t=self.enums.LEFT_PARENS.value, value=None)
                 elif self.char == self.enums.RIGHT_PARENS.value:

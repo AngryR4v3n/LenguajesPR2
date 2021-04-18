@@ -1,7 +1,7 @@
 import sys  
 import os
 #import dentro de la carpeta parsers
-sys.path.append(os.path.abspath(os.path.join("parsers")))
+sys.path.append(os.path.abspath(os.path.join("AFD/AFN/parsers")))
 
 from AFD import AFD
 from Thompson import Thompson

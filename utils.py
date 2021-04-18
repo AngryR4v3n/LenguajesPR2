@@ -133,7 +133,7 @@ def to_regex(string, case):
             sentence += string[i]
             if string[i+1] not in notToAdd and string[i] not in notToAdd:
                 
-                sentence += BuilderEnum.OR.value
+                sentence += BuilderEnum.CONCAT.value
 
         sentence += string[-1]
                 
@@ -145,7 +145,7 @@ def to_regex(string, case):
 Identifies if we are given a variable, it will replace that value
 x = 'ola' -> 'ola'
 """
-def identify_char(chars, diction):
+def identify_char(chars, diction, isTokens):
     keys = diction.keys()
     for key in keys:
         if chars == key:
@@ -153,8 +153,11 @@ def identify_char(chars, diction):
 
     #si posiciones esta vacia, es un operador. Si no, es un string que hay que a|b|c.. 
     positions = find_all_positions(chars, '"')
-    if len(positions) > 0:
+    if len(positions) > 0 and isTokens:
         chars = to_regex(chars, 3)
+
+    elif len(positions) > 0 and not isTokens:
+        chars = to_regex(chars, 1)
     
     return chars
 
@@ -163,7 +166,7 @@ Here we evaluate strings that contain  op + op2. We evaluate and return a string
 INPUT: array of operands
 OUTPUT: sentence already processed
 """
-def evaluate_characters(array, mode):
+def evaluate_characters(array, mode, isTokens):
     operations = ["+", "-", "{", "["]
 
     stack = []
@@ -172,7 +175,7 @@ def evaluate_characters(array, mode):
     result = ""
     for operator in array:
         if operator not in operations:
-            res = identify_char(operator, mode)
+            res = identify_char(operator, mode, isTokens)
             res.replace('"', "")
             stack.append(res)
                 

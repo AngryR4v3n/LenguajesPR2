@@ -47,14 +47,29 @@ def simulator(automata, isNfa):
             print("no")
 
 #main()
-def test():
+def single(regex):
     postfixer = Postfixer()
-    postfixRegex = postfixer.to_postfix("((a|b)*abb).#")
+    postfixRegex = postfixer.to_postfix(f"({regex}).#")
     builder = Builder(postfixRegex)
     #paso de generar tokens
     builder.generator()
     #array de tokens devuelto por
     tokens = builder.getTokenArr()
+    print("Tokens -> Regex:", tokens)
     parser = Parser()
-    parser.parse(tokens, "AFD", True)
-test()
+    return parser.parse(tokens, "AFD", False)
+
+def test():
+    postfixer = Postfixer()
+    postfixRegex = postfixer.to_postfix("(((0|1|2|3|4|5|6|7|8|9).(A|B|C|D|E|F))).#")
+    builder = Builder(postfixRegex)
+    #paso de generar tokens
+    builder.generator()
+    #array de tokens devuelto por
+    tokens = builder.getTokenArr()
+    print("Tokens -> Regex:", tokens)
+    parser = Parser()
+    return parser.parse(tokens, "AFD", True)
+    
+
+

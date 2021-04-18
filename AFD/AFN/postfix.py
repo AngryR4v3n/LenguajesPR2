@@ -153,10 +153,10 @@ class Postfixer:
 
             if(expr[i] == ")" and expr[i+1] == "("):
                 posToInsert.append(i)
-
+            """
             if(expr[i] == BuilderEnum.CONCAT.value and (not self.is_operand(expr[i+1]))):
                 fixed += "&"
-
+            """
             if(isOk):
                 fixed +=expr[i]
     

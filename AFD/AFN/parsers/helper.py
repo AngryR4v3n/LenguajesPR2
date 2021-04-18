@@ -27,16 +27,18 @@ def export_chart_subset(dfa):
     f.node(str(dfa.start.get_start()))
     
     
-    f.attr('node', shape='doublecircle')
+    
     for transition in states_fn:
         if transition.isFinal:
+            f.attr('node', shape='doublecircle')
             f.node(str(transition.get_start()))
             #states_fn.remove(counter)
     
 
     f.attr('node', shape='circle')
     for transition in states_fn:
-        f.edge(str(transition.get_start()), str(transition.get_end()), label=str(transition.get_transition()))
+        if not transition.isFinal and transition.get_transition():
+            f.edge(str(transition.get_start()), str(transition.get_end()), label=str(transition.get_transition()))
 
     f.view()
     

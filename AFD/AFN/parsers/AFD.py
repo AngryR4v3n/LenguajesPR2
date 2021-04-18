@@ -146,8 +146,13 @@ class AFD:
         self.build_automata(language)
 
         for x in self.fn:
-            if self.final[0] in x.get_start():
+            if self.final[0] in x.get_end():
+                #x.set_final(True)
+                #creamos estado nuevo
+                x = Transition(start=x.get_end(), transition=None, end=None)
                 x.set_final(True)
+                self.fn.append(x)
+                self.finalDFA.append(x)
                 break
         
         return
