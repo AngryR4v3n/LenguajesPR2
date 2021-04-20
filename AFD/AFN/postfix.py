@@ -29,11 +29,22 @@ class Postfixer:
         ]
     
     
-    def is_operand(self, ch):
-        if(ch not in self.operators) and ch != "(" and ch != ")":
-            return True
-        else: 
-            return False
+    def is_operand(self, ch, isStringLit=False):
+
+        if not isStringLit:
+            if(ch not in self.operators) and ch != "(" and ch != ")" and ch != '"':
+                return True
+            else: 
+                return False
+
+        else:
+            if(ch not in self.operators) and ch != '"':
+                return True
+
+            else: 
+                return False
+
+
 
     def check_precedence(self, i):
         try:
@@ -119,44 +130,53 @@ class Postfixer:
         posToInsert = []
         isOk = True
         pushStack = []
+        counter = 0
         for i in range(len(expr)-1):
             #si hay parens y no es operador...ni parentesis
-            if(expr[i] == ")" and expr[i+1] not in self.operators and expr[i+1] != "(" and expr[i+1] != ")"):
+            if expr[i] == '"':
+                counter +=1
+            if(expr[i] == ")" and expr[i+1] not in self.operators and expr[i+1] != "(" and expr[i+1] != ")" and expr[i+1] !='"'):
                 posToInsert.append(i)
-            
-            if(self.is_operand(expr[i]) and self.is_operand(expr[i+1])):
-                
-                posToInsert.append(i)
-            if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == BuilderEnum.KLEENE.value):
-                isOk = False
-            if len(pushStack)>0:
-                last_elem = pushStack[-1]
-                if last_elem == BuilderEnum.KLEENE.value and expr[i] == BuilderEnum.KLEENE.value:
+            if counter % 2 == 0:
+                if(self.is_operand(expr[i]) and self.is_operand(expr[i+1])):
+                    
+                    posToInsert.append(i)
+                if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == BuilderEnum.KLEENE.value):
                     isOk = False
-            if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == ")"):
-                pushStack.append(")")
-                pushStack.append(BuilderEnum.KLEENE.value)
-            
-            if(expr[i] == "(") and (i != 0) and self.is_operand(expr[i-1]) and self.is_operand(expr[i+1]):
-               
-                posToInsert.append(i-1)
-
-            if((expr[i] == BuilderEnum.KLEENE.value or expr[i] == BuilderEnum.PLUS.value) and self.is_operand(expr[i+1]) and (expr[i+1] != "(" or expr[i+1] != ")")):
+                if len(pushStack)>0:
+                    last_elem = pushStack[-1]
+                    if last_elem == BuilderEnum.KLEENE.value and expr[i] == BuilderEnum.KLEENE.value:
+                        isOk = False
+                if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == ")"):
+                    pushStack.append(")")
+                    pushStack.append(BuilderEnum.KLEENE.value)
                 
-                posToInsert.append(i)
+                if(expr[i] == "(") and (i != 0) and self.is_operand(expr[i-1]) and self.is_operand(expr[i+1]):
+                
+                    posToInsert.append(i-1)
 
-            if((expr[i] == BuilderEnum.KLEENE.value or expr[i] == BuilderEnum.PLUS.value) and (expr[i-1] == ")" and expr[i+1]) == "("):
-                posToInsert.append(i)
+                if((expr[i] == BuilderEnum.KLEENE.value or expr[i] == BuilderEnum.PLUS.value) and self.is_operand(expr[i+1]) and (expr[i+1] != "(" or expr[i+1] != ")")):
+                    
+                    posToInsert.append(i)
 
-            if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == "("):
-                posToInsert.append(i)
+                if((expr[i] == BuilderEnum.KLEENE.value or expr[i] == BuilderEnum.PLUS.value) and (expr[i-1] == ")" and expr[i+1]) == "("):
+                    posToInsert.append(i)
 
-            if(expr[i] == ")" and expr[i+1] == "("):
-                posToInsert.append(i)
-            """
-            if(expr[i] == BuilderEnum.CONCAT.value and (not self.is_operand(expr[i+1]))):
-                fixed += "&"
-            """
+                if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == "("):
+                    posToInsert.append(i)
+
+                if(expr[i] == ")" and expr[i+1] == "("):
+                    posToInsert.append(i)
+                """
+                if(expr[i] == BuilderEnum.CONCAT.value and (not self.is_operand(expr[i+1]))):
+                    fixed += "&"
+                """
+
+            else:
+                if(self.is_operand(expr[i], True) and self.is_operand(expr[i+1], True)):
+                    
+                    posToInsert.append(i)
+
             if(isOk):
                 fixed +=expr[i]
     
@@ -188,42 +208,61 @@ class Postfixer:
         expr = self.fix_string(expr)
         
         print("INTERPRETING AS: ", expr)
+        counter = 0
         for ch in expr:
-            if self.is_operand(ch):
-                self.output.append(ch)
-
-            elif ch == self.enums.LEFT_PARENS.value:
-                
-                self.stack.add(ch)
-
-            elif ch == ")":
-                
-                
-                while ((not self.stack.is_empty()) and (self.stack.peek() != self.enums.LEFT_PARENS.value)):
-                    a = self.stack.pop()
-                    self.output.append(a)
-
-                if (not self.stack.is_empty() and self.stack.peek() != self.enums.LEFT_PARENS.value):
-                    print("ERR: Incorrect syntax")
-                    exit(-1)
-                else:
-                    self.stack.pop()
+            if ch == '"':
+                counter += 1
             
-            elif ch in self.operators:
-            
-                while(not self.stack.is_empty() and self.check_precedence(ch)):
+            if counter % 2 == 0 or counter == 0:
+                if self.is_operand(ch):
+                    self.output.append(ch)
+
+                elif ch == self.enums.LEFT_PARENS.value:
                     
-                    self.output.append(self.stack.pop())
+                    self.stack.add(ch)
 
-                self.stack.add(ch)
-            #non supported char
-            else:
+                elif ch == ")":
+                    
+                    
+                    while ((not self.stack.is_empty()) and (self.stack.peek() != self.enums.LEFT_PARENS.value)):
+                        a = self.stack.pop()
+                        self.output.append(a)
+
+                    if (not self.stack.is_empty() and self.stack.peek() != self.enums.LEFT_PARENS.value):
+                        print("ERR: Incorrect syntax")
+                        exit(-1)
+                    else:
+                        self.stack.pop()
                 
-                print("ERR: Incorrect syntax")
-
-                print("NON SUPPORTED CHAR", ch)
-                exit(-1)
+                elif ch in self.operators:
+                
+                    while(not self.stack.is_empty() and self.check_precedence(ch)):
                         
+                        self.output.append(self.stack.pop())
+
+                    self.stack.add(ch)
+                
+                elif ch == '"':
+                    continue
+                #non supported char
+
+                else:
+                    
+                    print("ERR: Incorrect syntax")
+
+                    print("NON SUPPORTED CHAR", ch)
+                    exit(-1)
+            else:
+                if self.is_operand(ch, True):
+                    self.output.append(ch)
+                    continue
+                #operador dentro string literal
+                elif ch != '"':
+                    while(not self.stack.is_empty() and self.check_precedence(ch)):
+                        self.output.append(self.stack.pop())
+                    self.stack.add(ch)
+
+                            
         while not self.stack.is_empty():
             self.output.append(self.stack.pop())
         
