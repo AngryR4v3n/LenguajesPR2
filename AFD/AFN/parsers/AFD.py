@@ -6,7 +6,7 @@ from Automata import Automata
 import copy
 from helper import *
 class AFD:
-    def __init__(self):
+    def __init__(self, kind="None"):
         self.fn = []
         self.initial = None
         self.final = None
@@ -14,6 +14,7 @@ class AFD:
         self.table = []
         self.finalDFA = []
         self.language = []
+        self.type = kind
 
     def tree_to_stack(self, tree, res=[]):
         if tree:
@@ -149,7 +150,7 @@ class AFD:
             if self.final[0] in x.get_end():
                 #x.set_final(True)
                 #creamos estado nuevo
-                x = Transition(start=x.get_end(), transition=None, end=None)
+                x = Transition(start=x.get_end(), transition=None, end=None, kind=self.type)
                 x.set_final(True)
                 self.fn.append(x)
                 self.finalDFA.append(x)

@@ -200,7 +200,7 @@ def evaluate_characters(array, mode, isTokens):
             secondSet = set(second)
 
             sentence = firstSet - secondSet
-            sentence = sentence.pop(0)
+            sentence = sentence.pop()
             stack.insert(0, sentence)
             
         elif op == "+": 

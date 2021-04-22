@@ -1,5 +1,5 @@
 class Transition: 
-    def __init__(self, start=None, transition=None, end=None):
+    def __init__(self, start=None, transition=None, end=None, kind="None"):
         self.start = start
         self.transition = transition
         self.end = end
@@ -7,6 +7,7 @@ class Transition:
         self.index = None
         self.isFinal = False
         self.isInitial = False
+        self.type = kind
 
     def get_start(self):
         return self.start

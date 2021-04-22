@@ -1,7 +1,7 @@
 import utils
 import sys  
 import os
-
+import re 
 sys.path.append(os.path.abspath(os.path.join("AFD/AFN")))
 from BuilderEnum import BuilderEnum
 
@@ -124,7 +124,7 @@ class ATGReader():
             #chequeamos que si es CHAR(), lo pasamos de una..
             if cleanSplit[1].find("CHR(") > -1:
                 converted = self.chr_interpreter(cleanSplit[1])
-                cleanSplit[1] = converted
+                cleanSplit[1] = converted + '.'
 
             if cleanSplit[1][-1] == ".":
                 cleanSplit[1] = cleanSplit[1][0:-1]
@@ -137,16 +137,48 @@ class ATGReader():
         
 
     def chr_interpreter(self, word):
-        init = word.find("(") + 1 
-        final = word.find(")")
-        if init > 0 and final > -1:
+        substring = "\d+"
+        startPos = []
+        endPos = []
+        numbArr = []
+        for m in re.finditer(substring, word):
+            startPos.append(m.start())
+            endPos.append(m.end())
+        
+        for i in range(len(startPos)):
             try:
-                numb = int(word[init:final])
+                numbArr.append(int(word[startPos[i]:endPos[i]]))
+            except ValueError:
+                print("Incorrect grammar for CHR() expression at", self.counter)
+
+        if len(numbArr) < 1:
+            try:
+                numb = int(numbArr[0])
+                if numb == 148:
+                    numb = 32
             except ValueError:
                 print("Incorrect grammar for CHR() expression at", self.counter) 
 
             return chr(numb)
-    
+
+        else:
+            resta = numbArr[-1] - numbArr[0]
+            answer = []
+            for i in range(1,resta):
+                if numbArr[0] + i == 32:
+                    continue
+                else:
+                    answer.append(numbArr[0] + i)
+            stringAns = ""
+            for number in answer:
+                a = chr(number)
+                stringAns += a
+
+            return stringAns
+
+            
+
+        
     """
     String analyzer, converts string to regex expression. Here we dont have any CHR(), only strings
     INPUT: character dictionary *half cleansed*

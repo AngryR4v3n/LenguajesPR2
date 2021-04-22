@@ -47,7 +47,7 @@ def simulator(automata, isNfa):
             print("no")
 
 #main()
-def single(regex):
+def single(regex, hashType):
     postfixer = Postfixer()
     postfixRegex = postfixer.to_postfix(f"({regex}).#")
     builder = Builder(postfixRegex)
@@ -57,7 +57,7 @@ def single(regex):
     tokens = builder.getTokenArr()
     print("Tokens -> Regex:", tokens)
     parser = Parser()
-    return parser.parse(tokens, "AFD", False)
+    return parser.parse(tokens, "AFD", False, hashType)
 
 def test():
     postfixer = Postfixer()

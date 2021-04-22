@@ -16,14 +16,14 @@ class Parser:
     def __init__(self):
         self.enums = BuilderEnum
 
-    def parse(self, tokenArr, format, paint):
+    def parse(self, tokenArr, format, paint, kind="None"):
         
         if not self.isCorrect(tokenArr):
             print("Error: wrong input syntax!")
             print("Parenthesis mismatch!")
             return -1
         else:
-            parser = get_parser(format)
+            parser = get_parser(format, kind)
 
             if format == "Thompson":
 
@@ -80,9 +80,9 @@ class Parser:
 """
 receives format or method for interpreting(.) the RegEx
 """
-def get_parser(format):
+def get_parser(format, kind):
     if format == "AFD":
-        afd = AFD()
+        afd = AFD(kind)
         return afd.afd_parser
     elif format == "Thompson":
         thompson = Thompson()

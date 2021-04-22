@@ -7,6 +7,7 @@ CHARACTERS
 
 letter = "ab".
 digit= "0123456789".
+test= CHR(66) .. CHR(100).
 hexdigit= digit+"ABCDEF"+letter.
 
 KEYWORDS
