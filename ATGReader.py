@@ -80,9 +80,9 @@ class ATGReader():
                 if currentLine.split()[0] == limit:
                     self.counter = self.counter - elapsed_cycles
                     break
-                    #chequeamos estructura gramatical
+                    #chequeamos estructura gramatical y posibles operadores
                     
-                result = self.line_grammar_check(currentLine)
+                result = self.grammar_and_op_check(currentLine)
 
                 if result != None:
 
@@ -111,7 +111,7 @@ class ATGReader():
             self.keyword_to_regex()
 
     
-    def line_grammar_check(self, currentLine):
+    def grammar_and_op_check(self, currentLine):
         #revisamos que todo nice en gramatica, que exista un igual y que el final sea un . 
         if "=" in currentLine and currentLine[-1] == "." and currentLine != "": 
             split = currentLine.split("=")
@@ -125,6 +125,23 @@ class ATGReader():
             if cleanSplit[1].find("CHR(") > -1:
                 converted = self.chr_interpreter(cleanSplit[1])
                 cleanSplit[1] = converted + '.'
+            
+            """
+            if cleanSplit[1].find("EXCEPT KEYWORDS") > -1:
+            """
+            
+            if cleanSplit[1].find("ANY") > -1:
+                string = '"'
+                for i in range(33, 45):
+                    if i == 43 or i == 45:
+                        continue
+                    if i != 34:
+                        string += chr(i)
+                string += '"'
+                cleanSplit[1] = cleanSplit[1].replace("ANY", string)
+
+
+
 
             if cleanSplit[1][-1] == ".":
                 cleanSplit[1] = cleanSplit[1][0:-1]
