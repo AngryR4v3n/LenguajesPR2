@@ -1,27 +1,34 @@
-COMPILER Ejemplo
+COMPILER Aritmetica    
+	
 (.
-/*--------------Scanner Specification----------*/
+/*--------------Scanner Especification----------*/
 .)
 
 CHARACTERS 
 
-letter = "ab".
-digit= "0123456789".
-test= CHR(66) .. CHR(100).
-hexdigit= digit+"ABCDEF"+letter.
-ola = ANY - "ab".
+upletter = 'A' .. 'Z'.
+downletter = 'a' .. 'z'.
+letter = "abcdefghijklmnopqrstuvwxyz" + upletter + downletter. 
+digit = "0123456789" .
+hexdigit = digit + "ABCDEF".
+hexterm = 'H'.
+tab = CHR(9).
+eol = CHR(10).
+whitespace = CHR(13)+eol+tab+CHR(13).
+sign ='+'+'-'.
 
 KEYWORDS
 
-if="if".
-while="while".
+while = "while".
+do = "do".
 
 TOKENS
 
-id= a{a} EXCEPT KEYWORDS.
+ident = letter{letter|digit} EXCEPT KEYWORDS.
+hexnumber = hexdigit{hexdigit}hexterm EXCEPT KEYWORDS.
 number = digit{digit}.
-hexnumber = hexdigit{hexdigit}"(H)".
+signnumber = [sign]digit{digit}.
+whitetoken = whitespace{whitespace}
 
-PRODUCTIONS
 
-END Ejemplo
+END Aritmetica

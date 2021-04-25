@@ -7,17 +7,18 @@ def find_all_positions(string, substring):
     res = [i for i in range(len(string)) if string.startswith(substring, i)]
     return res
 """
-Identifies operands for + -
+Identifies operands for + - and ..
 """
 def operands_identifier(value):
     count = 0
     opMode = False
-    operators = ["+", "-"]
+    operators = ["+", "-", '..']
     toBeIdentified = []
     word = ""
     string = ""
-    for char in value:
-        if char == '"':
+    for i in range(len(value)-1):
+        char = value[i]
+        if char == '"' or char == "'":
             count += 1
         if count % 2 == 0 and char != "." and char not in operators and char != " ":
             word += char
@@ -32,6 +33,13 @@ def operands_identifier(value):
             
             if word != "" and word != '"':
                 toBeIdentified.append(word)
+        elif char == '.' and value[i+1] == '.':
+            toBeIdentified.append('..')
+            if string != "" and string != '"':
+                string += '"'
+                toBeIdentified.append(string)
+            
+            
             
             word = ""
             string = ""
@@ -167,7 +175,7 @@ INPUT: array of operands
 OUTPUT: sentence already processed
 """
 def evaluate_characters(array, mode, isTokens):
-    operations = ["+", "-", "{", "["]
+    operations = ["+", "-", "{", "[", ".."]
 
     stack = []
     toBeDone = []
@@ -215,6 +223,13 @@ def evaluate_characters(array, mode, isTokens):
             sentence += ")"
             stack.insert(0,sentence)
 
+        elif op == "..":
+            first = stack.pop(0).replace('"', "")
+            second = stack.pop(0).replace('"', "")
+            sentence += "(" + get_alphabet_set(first, second) + ")"
+            stack.insert(0, sentence)
+            
+
         elif op == "{":
             next_op = stack.pop(0)
             #jala todo lo que este dentro
@@ -260,3 +275,30 @@ def evaluate_characters(array, mode, isTokens):
 
 
     return stack.pop(0)
+
+
+def get_alphabet_set(initial, final):
+    if initial.islower():
+        alpha = "abcdefghijklmnopqrstuvwxyz"
+    else:
+        alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    alpha = list(alpha)
+    toReturn = ""
+    counter = 0
+    for i in range(len(alpha)):
+        if initial == alpha[i]:
+            x = alpha[i]
+            counter = i
+            
+            for j in range(counter, len(alpha)):
+                if x != final:
+                    x = alpha[j]
+                    toReturn += alpha[j]
+                else:
+                    break
+
+            break
+        
+    return toReturn
+                

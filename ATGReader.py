@@ -130,6 +130,7 @@ class ATGReader():
             if cleanSplit[1].find("EXCEPT KEYWORDS") > -1:
             """
             
+            
             if cleanSplit[1].find("ANY") > -1:
                 string = '"'
                 for i in range(33, 45):
@@ -140,7 +141,9 @@ class ATGReader():
                 string += '"'
                 cleanSplit[1] = cleanSplit[1].replace("ANY", string)
 
-
+            
+            #Eliminamos string literals de un quote
+            cleanSplit[1] = self.change_str_literal(cleanSplit[1])
 
 
             if cleanSplit[1][-1] == ".":
@@ -151,7 +154,14 @@ class ATGReader():
 
         return cleanSplit
 
-        
+    def change_str_literal(self, word):
+        substring = "'(([\s\S])+)'"
+        x = re.findall(substring, word)
+        if len(x) > 0:
+            word = word.replace("'", '"')
+            return word
+        else:
+            return word
 
     def chr_interpreter(self, word):
         substring = "\d+"
