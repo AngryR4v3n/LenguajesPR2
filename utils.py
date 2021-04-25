@@ -2,6 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join("AFD/AFN")))
 from BuilderEnum import BuilderEnum
+import re
 
 def find_all_positions(string, substring):
     res = [i for i in range(len(string)) if string.startswith(substring, i)]
@@ -9,6 +10,24 @@ def find_all_positions(string, substring):
 """
 Identifies operands for + - and ..
 """
+
+def get_literal(string):
+    counter = 0
+    toReturn = ''
+    char = string[0]
+    quoteCounter = 0
+    while quoteCounter < 2:
+        try:
+            char = string[counter]
+        except:
+            print('Error, no ending of string literal')
+            break
+        if char == '"' or char == "'":
+            quoteCounter += 1 
+        toReturn += char
+        counter += 1
+    return toReturn
+
 def operands_identifier(value):
     count = 0
     opMode = False
@@ -18,40 +37,65 @@ def operands_identifier(value):
     string = ""
     for i in range(len(value)-1):
         char = value[i]
+
         if char == '"' or char == "'":
             count += 1
-        if count % 2 == 0 and char != "." and char not in operators and char != " ":
+            if count % 2 != 0: 
+                string = get_literal(value[i:])
+    
+        
+        if char != "." and char not in operators and char != " " and string == "":
             word += char
-        if count % 2 != 0:
-            string += char
+            resta = len(value) - 1 - i
+            if resta == 1:
+                word += value[-1]
+                toBeIdentified.append(word)
+                word = ""
 
         if char in operators:
             toBeIdentified.append(char)
             if string != "" and string != '"':
-                string += '"'
                 toBeIdentified.append(string)
+                string = ""
             
             if word != "" and word != '"':
-                toBeIdentified.append(word)
+                resta = len(value) - 1 - i
+                if resta == 0:
+                    word += value[-1]
+                    toBeIdentified.append(word)
+                    word = ""
+                else:
+                    toBeIdentified.append(word)
+                    word = ""
+
         elif char == '.' and value[i+1] == '.':
             toBeIdentified.append('..')
             if string != "" and string != '"':
-                string += '"'
+                
                 toBeIdentified.append(string)
+                string = ""
+            if word != "" and word != '"':
+                resta = len(value) - 1 - i
+                if resta == 0:
+                    word += value[-1]
+                    toBeIdentified.append(word)
+                    word = ""
+                else:
+                    toBeIdentified.append(word)
+                    word = ""
             
             
             
             word = ""
             string = ""
 
-        
-            
-    if string != "" and string != '"':
-                string += '"'
-                toBeIdentified.append(string)
     if word != "" and word != '"':
         toBeIdentified.append(word)
-            
+    if string != "" and word != '"':
+        toBeIdentified.append(string)
+
+    
+        
     return toBeIdentified
 
 

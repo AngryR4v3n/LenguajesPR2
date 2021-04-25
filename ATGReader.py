@@ -137,7 +137,7 @@ class ATGReader():
                     if i == 43 or i == 45:
                         continue
                     if i != 34:
-                        string += chr(i)
+                        string += repr(chr(i))
                 string += '"'
                 cleanSplit[1] = cleanSplit[1].replace("ANY", string)
 
@@ -178,7 +178,7 @@ class ATGReader():
             except ValueError:
                 print("Incorrect grammar for CHR() expression at", self.counter)
 
-        if len(numbArr) < 1:
+        if len(numbArr) <= 1:
             try:
                 numb = int(numbArr[0])
                 if numb == 148:
@@ -186,7 +186,7 @@ class ATGReader():
             except ValueError:
                 print("Incorrect grammar for CHR() expression at", self.counter) 
 
-            return chr(numb)
+            return repr(chr(numb))
 
         else:
             resta = numbArr[-1] - numbArr[0]
@@ -198,7 +198,7 @@ class ATGReader():
                     answer.append(numbArr[0] + i)
             stringAns = ""
             for number in answer:
-                a = chr(number)
+                a = repr(chr(number))
                 stringAns += a
 
             return stringAns
@@ -218,7 +218,12 @@ class ATGReader():
             separated = utils.operands_identifier(val)
             sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
-            regex = utils.to_regex(sentence, 1)
+            
+            if sentence.find("\\") > -1:
+                sentence = sentence[2:]
+                regex = utils.to_regex(sentence, 2)
+            else:
+                regex = utils.to_regex(sentence, 1)
             self.characters[key] = regex
             print("Final CHAR", regex)
 
