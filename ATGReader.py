@@ -122,9 +122,6 @@ class ATGReader():
                 cleanSplit.append(word.strip())
 
             #chequeamos que si es CHAR(), lo pasamos de una..
-            if cleanSplit[1].find("CHR(") > -1:
-                converted = self.chr_interpreter(cleanSplit[1])
-                cleanSplit[1] = converted + '.'
             
             """
             if cleanSplit[1].find("EXCEPT KEYWORDS") > -1:
@@ -163,45 +160,6 @@ class ATGReader():
         else:
             return word
 
-    def chr_interpreter(self, word):
-        substring = "\d+"
-        startPos = []
-        endPos = []
-        numbArr = []
-        for m in re.finditer(substring, word):
-            startPos.append(m.start())
-            endPos.append(m.end())
-        
-        for i in range(len(startPos)):
-            try:
-                numbArr.append(int(word[startPos[i]:endPos[i]]))
-            except ValueError:
-                print("Incorrect grammar for CHR() expression at", self.counter)
-
-        if len(numbArr) <= 1:
-            try:
-                numb = int(numbArr[0])
-                if numb == 148:
-                    numb = 32
-            except ValueError:
-                print("Incorrect grammar for CHR() expression at", self.counter) 
-
-            return chr(numb)
-
-        else:
-            resta = numbArr[-1] - numbArr[0]
-            answer = []
-            for i in range(1,resta):
-                if numbArr[0] + i == 32:
-                    continue
-                else:
-                    answer.append(numbArr[0] + i)
-            stringAns = ""
-            for number in answer:
-                a = chr(number)
-                stringAns += a
-
-            return stringAns
 
             
 
@@ -219,17 +177,10 @@ class ATGReader():
             separated = utils.operands_identifier(val)
             sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
-            
-            if sentence.find("\\") > -1:
-                sentence = sentence.replace('"', "")
-                
-                sentence = sentence.replace("|", "")
-                
+            if sentence.find("|") ==  -1:
+                regex = utils.to_regex(sentence, 1)
             else:
-                if sentence.find("|") ==  -1:
-                    regex = utils.to_regex(sentence, 1)
-                else:
-                    regex = sentence
+                regex = sentence
             self.characters[key] = regex
             print("Final CHAR", regex)
 

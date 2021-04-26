@@ -42,7 +42,7 @@ class BTree:
                 for num in right:
                     if num not in table[i]:
                         table[i].append(num)
-                        
+                
                        
 
         #self.forward_pos = trans.get_end()

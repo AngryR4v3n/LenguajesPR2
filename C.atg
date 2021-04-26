@@ -5,17 +5,19 @@ COMPILER Aritmetica
 .)
 
 CHARACTERS 
+digit = "0123456789" .
+sign ='+' + '-'. 
 tab = CHR(9).
-sign ='+' + '-'.
+
 upletter = 'A' .. 'Z'.
 downletter = 'a' .. 'z'.
 letter = "abcdefghijklmnopqrstuvwxyz" + upletter + downletter. 
-digit = "0123456789" .
+
 hexdigit = digit + "ABCDEF".
 hexterm = 'H'.
 
 eol = CHR(10).
-whitespace = CHR(13)+eol+tab+CHR(13).
+whitespace=CHR(13)+eol+tab+CHR(13).
 
 
 KEYWORDS
