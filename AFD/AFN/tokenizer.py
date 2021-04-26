@@ -8,9 +8,10 @@ class Tokenizer:
     Returns a token, tokens have a type (whether they are an operator or a symbol)
     and they also have a value.
     """
-    def __init__(self, type_t, value=None):
+    def __init__(self, type_t, value=None, identifier=None):
         self.type = type_t
         self.value = value
+        self.identifier = identifier
         
 
     """

@@ -1,6 +1,10 @@
 from Builder import *
 from Parser import Parser
 from postfix import Postfixer
+import sys  
+import os
+sys.path.append(os.path.abspath(os.path.join("AFD/AFN")))
+from BuilderEnum import BuilderEnum
 #should return tokens
 
 
@@ -59,9 +63,28 @@ def single(regex, hashType):
     parser = Parser()
     return parser.parse(tokens, "AFD", False, hashType)
 
+def whole_regex(arrRegex):
+    main_tree = ""
+    for regex in arrRegex:
+        main_tree += regex 
+    #delete last or..
+    main_tree = main_tree[0:-1]
+    print("Main tree is: ", main_tree)
+    postfixer = Postfixer()
+    postfixRegex = postfixer.to_postfix(main_tree)
+    builder = Builder(postfixRegex)
+    #paso de generar tokens
+    builder.generator()
+    #array de tokens devuelto por
+    tokens = builder.getTokenArr()
+    print("Tokens -> Regex:", tokens)
+    parser = Parser()
+    return parser.parse(tokens, "AFD", True)
+    
+    
 def test():
     postfixer = Postfixer()
-    postfixRegex = postfixer.to_postfix('(((+)δ(-))γ"0γ1γ2γ3γ4γ5γ6γ7γ8γ9")("0γ1γ2γ3γ4γ5γ6γ7γ8γ9")αδ#')
+    postfixRegex = postfixer.to_postfix(f'(((+)δ(-))γ"0γ1γ2γ3γ4γ5γ6γ7γ8γ9")("0γ1γ2γ3γ4γ5γ6γ7γ8γ9")αδ{BuilderEnum.HASH.value}')
     builder = Builder(postfixRegex)
     #paso de generar tokens
     builder.generator()

@@ -76,7 +76,7 @@ class AFD:
             export_chart_subset(au)
         
         return au
-        #print("done", table)
+        
 
     def translate(self):
         vocab = vocabulary()
@@ -188,7 +188,7 @@ class AFD:
             
             #obtenemos move de toState
             for letter in language:
-                if letter != "&" and letter != "#":
+                if letter != "&" and letter != BuilderEnum.HASH.value:
                     #get traversal pasa a ser la union de los follow pos de cada uno de los elem
                     res = self.traverse(toState.get_end(), letter)
                     if len(res) > 0:

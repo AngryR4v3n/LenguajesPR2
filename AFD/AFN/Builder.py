@@ -5,6 +5,8 @@ class Builder():
     
     def __init__(self, instruction):
         self.raw = instruction
+        joined = "".join(self.raw)
+        self.byHash = joined.split(f"{BuilderEnum.HASH.value}")
         self.instruction = iter(instruction)
         self.next_char()
         self.tokensArr =[]
@@ -44,9 +46,16 @@ class Builder():
             if (self.char not in self.operators and self.char and self.char != '"'):
 
                 if (self.counter % 2 != 0 and self.char and self.counter > 0):
-                    token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+                    if(self.char == self.enums.HASH.value):
+                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.raw)
+                    else:
+                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
                 elif (self.counter % 2 == 0 and self.char):
-                    token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+                    if(self.char == self.enums.HASH.value):
+                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.raw)
+                    else:
+                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+
 
 
             

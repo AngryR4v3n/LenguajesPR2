@@ -73,6 +73,8 @@ def generate_tree(tokensArr):
         if token.get_type() == "SYMBOL":
             tree = BTree()
             tree.root = token.get_value()
+            if tree.root == BuilderEnum.HASH.value:
+                tree.identifier = token.identifier
             tree.left = None
             tree.right = None
             tree.number = counter
