@@ -26,24 +26,34 @@ def get_literal(string):
             quoteCounter += 1 
         toReturn += char
         counter += 1
-    return toReturn
+    return toReturn, counter
 
 def operands_identifier(value):
     count = 0
-    opMode = False
+    
     operators = ["+", "-", '..']
     toBeIdentified = []
     word = ""
     string = ""
+    skip = 0
     for i in range(len(value)-1):
         char = value[i]
+        
+        if skip != 0:
+            count = 0
+            skip -= 1
+            continue
+
 
         if char == '"' or char == "'":
             count += 1
             if count % 2 != 0: 
-                string = get_literal(value[i:])
+                val, skip = get_literal(value[i:])
+                string += val
+                skip -= 1
     
         
+            
         if char != "." and char not in operators and char != " " and string == "":
             word += char
             resta = len(value) - 1 - i
@@ -52,7 +62,7 @@ def operands_identifier(value):
                 toBeIdentified.append(word)
                 word = ""
 
-        if char in operators:
+        if char in operators and count % 2 == 0:
             toBeIdentified.append(char)
             if string != "" and string != '"':
                 toBeIdentified.append(string)
@@ -88,11 +98,15 @@ def operands_identifier(value):
             
             word = ""
             string = ""
-
+        
+    
     if word != "" and word != '"':
         toBeIdentified.append(word)
     if string != "" and word != '"':
         toBeIdentified.append(string)
+
+    if len(toBeIdentified) == 0:
+        toBeIdentified.append(value)
 
     
         
@@ -157,11 +171,18 @@ Given a string like abc -> (a|b|c)
 """
 def to_regex(string, case):
     if case == 1:
-        string = string.replace('"', "")
+        
         sentence = ""
-        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"']
+        quotes = ["'", '"']
+        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"', "'"]
+        counter = 0 
         for i in range(len(string) - 1):
+            char = string[i]
             sentence += string[i]
+            if char in quotes:
+                counter += 1
+            if counter % 2 == 0 and counter > 0 and char in quotes:
+                sentence += BuilderEnum.OR.value
             if string[i+1] not in notToAdd and string[i] not in notToAdd:
                 
                 sentence += BuilderEnum.OR.value

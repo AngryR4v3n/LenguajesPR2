@@ -137,7 +137,7 @@ class ATGReader():
                     if i == 43 or i == 45:
                         continue
                     if i != 34:
-                        string += repr(chr(i))
+                        string += chr(i)
                 string += '"'
                 cleanSplit[1] = cleanSplit[1].replace("ANY", string)
 
@@ -186,7 +186,7 @@ class ATGReader():
             except ValueError:
                 print("Incorrect grammar for CHR() expression at", self.counter) 
 
-            return repr(chr(numb))
+            return chr(numb)
 
         else:
             resta = numbArr[-1] - numbArr[0]
@@ -198,14 +198,14 @@ class ATGReader():
                     answer.append(numbArr[0] + i)
             stringAns = ""
             for number in answer:
-                a = repr(chr(number))
+                a = chr(number)
                 stringAns += a
 
             return stringAns
 
             
 
-        
+    
     """
     String analyzer, converts string to regex expression. Here we dont have any CHR(), only strings
     INPUT: character dictionary *half cleansed*
@@ -214,16 +214,22 @@ class ATGReader():
         keys = self.characters.keys()
         
         for key in keys:
-            val = self.characters[key] 
+            val = self.characters[key]
+            # number + A ->  number + A -> [+, 012345668, A]
             separated = utils.operands_identifier(val)
             sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
             
             if sentence.find("\\") > -1:
-                sentence = sentence[2:]
-                regex = utils.to_regex(sentence, 2)
+                sentence = sentence.replace('"', "")
+                
+                sentence = sentence.replace("|", "")
+                
             else:
-                regex = utils.to_regex(sentence, 1)
+                if sentence.find("|") ==  -1:
+                    regex = utils.to_regex(sentence, 1)
+                else:
+                    regex = sentence
             self.characters[key] = regex
             print("Final CHAR", regex)
 
