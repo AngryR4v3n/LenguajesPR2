@@ -61,7 +61,7 @@ def single(regex, hashType):
 
 def test():
     postfixer = Postfixer()
-    postfixRegex = postfixer.to_postfix('(("|"|1|2|3|4|5|6|7|8|9)).#')
+    postfixRegex = postfixer.to_postfix('(((+)δ(-))γ"0γ1γ2γ3γ4γ5γ6γ7γ8γ9")("0γ1γ2γ3γ4γ5γ6γ7γ8γ9")αδ#')
     builder = Builder(postfixRegex)
     #paso de generar tokens
     builder.generator()

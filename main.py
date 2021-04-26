@@ -8,10 +8,10 @@ reader.build_atg()
 
 #Conversion process
 atgAutomatas = ATGParser(reader)
-#atgAutomatas.convert_characters()
+atgAutomatas.convert_characters()
 #atgAutomatas.convert_keywords()
 #atgAutomatas.convert_tokens()
-atgAutomatas.test()
+#atgAutomatas.test()
 
 print("End parsing ATG")
 

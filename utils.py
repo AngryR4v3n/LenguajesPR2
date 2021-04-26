@@ -225,14 +225,61 @@ def identify_char(chars, diction, isTokens):
             return diction[key]
 
     #si posiciones esta vacia, es un operador. Si no, es un string que hay que a|b|c.. 
-    positions = find_all_positions(chars, '"')
-    if len(positions) > 0 and isTokens:
-        chars = to_regex(chars, 3)
 
-    elif len(positions) > 0 and not isTokens:
-        chars = to_regex(chars, 1)
-    
+
+    if chars.find("CHR(") > -1:
+        chars = chr_interpreter(chars)
+    else:
+
+        positions = find_all_positions(chars, '"')
+        if len(positions) > 0 and isTokens:
+            chars = to_regex(chars, 3)
+
+        elif len(positions) > 0 and not isTokens:
+            chars = to_regex(chars, 1)
+        
     return chars
+    
+
+def chr_interpreter(word):
+    substring = "\d+"
+    startPos = []
+    endPos = []
+    numbArr = []
+    for m in re.finditer(substring, word):
+        startPos.append(m.start())
+        endPos.append(m.end())
+    
+    for i in range(len(startPos)):
+        try:
+            numbArr.append(int(word[startPos[i]:endPos[i]]))
+        except ValueError:
+            print("Incorrect grammar for CHR() expr")
+
+    if len(numbArr) <= 1:
+        try:
+            numb = int(numbArr[0])
+            if numb == 148:
+                numb = 32
+        except ValueError:
+            print("Incorrect grammar for CHR() expr") 
+
+        return chr(numb)
+
+    else:
+        resta = numbArr[-1] - numbArr[0]
+        answer = []
+        for i in range(1,resta):
+            if numbArr[0] + i == 32:
+                continue
+            else:
+                answer.append(numbArr[0] + i)
+        stringAns = ""
+        for number in answer:
+            a = chr(number)
+            stringAns += a
+
+        return stringAns
 
 """
 Here we evaluate strings that contain  op + op2. We evaluate and return a string 'abc'

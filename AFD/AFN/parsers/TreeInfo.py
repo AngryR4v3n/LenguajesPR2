@@ -44,7 +44,7 @@ def compute_last(tree):
         unified = union(arr1, arr2)
         tree.last_pos = unified
         return unified
-    elif(tree.root == "." and not (is_nullable(tree.right))):
+    elif(tree.root == BuilderEnum.CONCAT.value and not (is_nullable(tree.right))):
         arr1 = tree.right.last_pos 
         tree.last_pos = arr1
         return arr1
