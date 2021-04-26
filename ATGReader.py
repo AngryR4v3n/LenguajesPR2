@@ -177,7 +177,7 @@ class ATGReader():
             separated = utils.operands_identifier(val)
             sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
-            if sentence.find("|") ==  -1:
+            if sentence.find(BuilderEnum.OR.value) ==  -1:
                 regex = utils.to_regex(sentence, 1)
             else:
                 regex = sentence

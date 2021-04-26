@@ -51,6 +51,13 @@ class AFD:
         return new_tokens
 
 
+    def get_hashtags(self, st):
+        finalDict = {}
+        for elem in st:
+            if elem.root == BuilderEnum.HASH.value:
+                finalDict[elem.first_pos[0]]=elem.identifier
+
+        return finalDict
     def afd_parser(self, rawToken, paint):
         
         tokens = self.fix_tokens(rawToken)
@@ -60,7 +67,8 @@ class AFD:
         st.reverse()
         table = self.compute_positions(st)
         #we turn it around to have depth first..
-        self.final = st[0].first_pos
+
+        self.final = self.get_hashtags(st)
         st.reverse()
         self.initial = st[0].first_pos
         self.createDFA(tokens)
@@ -136,6 +144,30 @@ class AFD:
         
         return table
 
+    def interset(self, arr1, arr2):
+        """setA=set(arr1)
+        setB=set(arr2)
+        return bool(setA & setB)"""
+        res = []
+        arr1 = list(arr1)
+        if arr2:
+            if len(arr1) >= len(arr2):
+                setA = arr1
+                setB = arr2
+            else:
+                setA = arr2
+                setB = arr1
+
+            for elemB in setB:
+                for elemA in setA:
+                    if elemA == elemB:
+                        res.append(elemA)
+
+        if res:
+            return res, True
+        else:
+            return res, False
+        return res
 
     def createDFA(self, tokens):
         language = []
@@ -145,17 +177,17 @@ class AFD:
                     language.append(token.get_value())
         self.language = language
         self.build_automata(language)
-
+        
         for x in self.fn:
-            if self.final[0] in x.get_end():
-                #x.set_final(True)
+            #if self.final in x.get_end():
+            z, isCommon = self.interset(self.final.keys(), x.get_end())
+            if isCommon:
                 #creamos estado nuevo
-                x = Transition(start=x.get_end(), transition=None, end=None, kind=self.type)
+                x = Transition(start=x.get_end(), transition=None, end=None, kind={self.final[z[0]]: z[0]})
                 x.set_final(True)
                 self.fn.append(x)
                 self.finalDFA.append(x)
-                break
-        
+                
         return
     
    
@@ -177,7 +209,7 @@ class AFD:
         else:
             print("AFD", check)
             return "finished"
-        print("States", dfa_states)
+        #print("States", dfa_states)
     
         for toState in dfa_states:
             if toState.get_mark():
@@ -207,7 +239,7 @@ class AFD:
                             createState.set_index(counter)
                             counter += 1 
                             if not self.check_existence(createState):
-                                self.fn.append(createState)
+                                self.fn.append(createState)      
                 else:
                     continue
         

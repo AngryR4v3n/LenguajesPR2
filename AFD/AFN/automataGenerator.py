@@ -63,16 +63,16 @@ def single(regex, hashType):
     parser = Parser()
     return parser.parse(tokens, "AFD", False, hashType)
 
-def whole_regex(arrRegex):
+def whole_regex(arrRegex, dictionary):
     main_tree = ""
     for regex in arrRegex:
-        main_tree += regex 
+        main_tree += "("+ regex + ")" + f"{BuilderEnum.CONCAT.value}{BuilderEnum.HASH.value}" + f"{BuilderEnum.OR.value}"
     #delete last or..
     main_tree = main_tree[0:-1]
     print("Main tree is: ", main_tree)
     postfixer = Postfixer()
     postfixRegex = postfixer.to_postfix(main_tree)
-    builder = Builder(postfixRegex)
+    builder = Builder(postfixRegex, dictionary=dictionary)
     #paso de generar tokens
     builder.generator()
     #array de tokens devuelto por

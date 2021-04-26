@@ -3,10 +3,8 @@ from BuilderEnum import BuilderEnum
 class Builder():
     
     
-    def __init__(self, instruction):
+    def __init__(self, instruction, dictionary=None):
         self.raw = instruction
-        joined = "".join(self.raw)
-        self.byHash = joined.split(f"{BuilderEnum.HASH.value}")
         self.instruction = iter(instruction)
         self.next_char()
         self.tokensArr =[]
@@ -14,10 +12,18 @@ class Builder():
         self.parens = ["(", ")"]
         self.enums = BuilderEnum
         self.counter = 0
+        self.hashNumb = 0
+        self.identifier = dictionary
         
         
 
-    #(a|b)
+    
+    def get_identifier(self, counter):
+        keys = self.identifier.keys()
+        keys = list(keys)
+        return keys[counter]
+
+    
     def set_instruction(self, instruction):
         self.instruction = iter(instruction)
         self.next_char()
@@ -47,12 +53,16 @@ class Builder():
 
                 if (self.counter % 2 != 0 and self.char and self.counter > 0):
                     if(self.char == self.enums.HASH.value):
-                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.raw)
+                        
+                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.get_identifier(self.hashNumb))
+                        self.hashNumb += 1
                     else:
                         token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
                 elif (self.counter % 2 == 0 and self.char):
                     if(self.char == self.enums.HASH.value):
-                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.raw)
+                        
+                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.get_identifier(self.hashNumb))
+                        self.hashNumb += 1
                     else:
                         token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
 
