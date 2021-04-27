@@ -181,12 +181,24 @@ class AFD:
             if isCommon:
                 #creamos estado nuevo
                 
-                x = Transition(start=x.get_end(), transition=None, end=None, kind={self.final[z[0]]: z[0]})
-                x.set_final(True)
-                self.fn.append(x)
-                self.finalDFA.append(x)
+                f = Transition(start=x.get_end(), transition=None, end=None, kind={self.final[z[0]]: z[0]})
+                f.set_final(True)
+                self.fn.append(f)
+                self.finalDFA.append(f)
+                
+                arr = self.find_transition_to_end(x.get_end())
+                for i in arr:
+                    i.type = {self.final[z[0]]: z[0]}
                 
         return
+
+    def find_transition_to_end(self, end):
+        res = []
+        for x in self.fn:
+            if x.get_end() == end:
+                res.append(x)
+
+        return res
     
    
     def build_automata(self, language, counter=0, checkArr=None):

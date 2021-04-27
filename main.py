@@ -32,7 +32,8 @@ scanner.write("\n"*3)
 reading = """def reader_tester():
     f = open('test.txt', 'r')
     x = f.read()
-    r = automata.simulate_DFA(x)
+    for c in x:
+        r = automata.simulate_DFA(None, c)
     print("Finished", r)
     """
 
