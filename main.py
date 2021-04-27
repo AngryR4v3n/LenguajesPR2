@@ -29,12 +29,23 @@ automata = Automata({states},{language}, {start}, {end}, {fn})
 """
 scanner.write(buildAutomata)
 scanner.write("\n"*3)
-reading = """def reader_tester():
-    f = open('test.txt', 'r')
+reading = """f = open('test.txt', 'r')
     x = f.read()
+    response = []
+    r = automata.simulate_DFA(None, x[0])
+    x=x[1:]
     for c in x:
-        r = automata.simulate_DFA(None, c)
-    print("Finished", r)
+        if r:
+            response.append(r)
+            r = automata.simulate_DFA(response[-1], c)
+        else:
+            print("finished token", response)
+            r= automata.simulate_DFA(None, c)
+            
+    #el ultimo..
+    response.append(r)
+
+    print("Finished", response)
     """
 
 
