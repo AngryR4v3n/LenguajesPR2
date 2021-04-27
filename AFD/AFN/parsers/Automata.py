@@ -73,11 +73,11 @@ class Automata:
 
 
     def traverse_dfa(self, state, letter):
-        toReturn = "bad"
         for st in self.fn:
-            if st.get_start() == state and st.get_transition() == letter:
-                toReturn = st.get_end()
-        return toReturn
+            if st.get_start() == state.get_start() and st.get_transition() == letter:
+                return st
+        return None
+        
 
     def get_traversal(self, arr, letter):
         answer = []
@@ -100,15 +100,36 @@ class Automata:
         print(S)
     
     def simulate_DFA(self, string):
+        answers = []
         S = self.start
         for c in string:
             S = self.traverse_dfa(S,c)
+            #Si encuentra un estado al cual ir..
+            if S:
+                #Entonces revisamos 
+                for elem in self.end:
+                    if S.get_end() == elem.get_start():
+                        trans = self.find_transition(S.get_end(), c)
+                        if trans not in answers:
+                            answers.append(trans)
+                        
+                            break
+                        
 
-        for elem in self.end:
-            if S in elem.get_start():
-                return 1
             else:
-                return 0
+                return None
+                
+
+        return answers
+
+    def find_transition(self, target, char):
+        for func in self.fn:
+            if func.get_start() == target and func.get_end() == None:
+                return func
+
+
+    
+            
         
     def __repr__(self):
         return f"\n<Automata fn: {self.fn} with language: {self.language} states: {self.states}>\n STARTING NODE: {self.start}, END STATES: {self.end}"

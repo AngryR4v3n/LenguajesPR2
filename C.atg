@@ -24,11 +24,11 @@ do = "do".
 
 TOKENS
 
-ident = letter{letter|digit} EXCEPT KEYWORDS.
-hexnumber = hexdigit{hexdigit}hexterm EXCEPT KEYWORDS.
+
+hexnumber = hexdigit{hexdigit}hexterm.
 number = digit{digit}.
-signnumber = [sign]digit{digit}.
-whitetoken = whitespace{whitespace}
+
+
 
 
 END Aritmetica

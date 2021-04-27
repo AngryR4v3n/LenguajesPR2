@@ -145,9 +145,6 @@ class AFD:
         return table
 
     def interset(self, arr1, arr2):
-        """setA=set(arr1)
-        setB=set(arr2)
-        return bool(setA & setB)"""
         res = []
         arr1 = list(arr1)
         if arr2:
@@ -183,6 +180,7 @@ class AFD:
             z, isCommon = self.interset(self.final.keys(), x.get_end())
             if isCommon:
                 #creamos estado nuevo
+                
                 x = Transition(start=x.get_end(), transition=None, end=None, kind={self.final[z[0]]: z[0]})
                 x.set_final(True)
                 self.fn.append(x)

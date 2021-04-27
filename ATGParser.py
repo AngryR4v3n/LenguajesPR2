@@ -11,8 +11,10 @@ class ATGParser():
         self.keywords = {}
 
     def main_tree(self):
-        keys = self.ATG.characters.keys()
         all_tree = []
+        """
+        keys = self.ATG.characters.keys()
+        
         hashType = ""
         for key in keys:
             hashType = f"CHARACTER - {key}"
@@ -20,11 +22,12 @@ class ATGParser():
             all_tree.append(toConvert)
 
         """
+        
         keys = self.ATG.tokens.keys()
         for key in keys:
             toConvert = self.ATG.tokens[key]
             all_tree.append(toConvert)
-        """
+        
         """
         keys = self.ATG.keywords.keys()
         for key in keys:
@@ -32,7 +35,8 @@ class ATGParser():
             all_tree.append(toConvert)
         """
 
-        automataGenerator.whole_regex(all_tree, self.ATG.characters)
+        automata = automataGenerator.whole_regex(all_tree, self.ATG.tokens)
+        return automata.states, automata.language, automata.start, automata.end, automata.fn
 
 
 

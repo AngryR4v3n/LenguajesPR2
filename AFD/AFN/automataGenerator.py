@@ -34,22 +34,6 @@ def generate(toBuild, automata, paint):
 
     return parser.parse(tokens, toBuild, paint)
 
-def simulator(automata, isNfa):
-    string = input("Type the string to test: ")
-    print("Simulating: \n", automata)
-    if isNfa:
-        ans = automata.simulate_NFA(string)
-        if ans > 0:
-            print("yes")
-        else: 
-            print("no")
-    else:
-        ans = automata.simulate_DFA(string)
-        if ans > 0:
-            print("yes")
-        else:
-            print("no")
-
 #main()
 def single(regex, hashType):
     postfixer = Postfixer()
