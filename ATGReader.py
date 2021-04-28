@@ -201,10 +201,18 @@ class ATGReader():
         for key in keys:
             val = self.tokens[key]
             print("Processed TOKENS", val)
-            separated = utils.operands_identifier_v2(val)
-            sentence = utils.evaluate_characters(separated, self.characters, True)
-            print("Final TOKEN ", sentence)
-            self.tokens[key] = sentence
+            #complejos {} []
+            reduced = utils.complex_operators_eval(val)
+            #simples |
+            translated = utils.simple_operators(reduced)
+            #identificar variables
+            identified = utils.identifier(translated, self.characters)
+            
+
+            
+            #sentence = utils.evaluate_characters(separated, self.characters, True)
+            print("Final TOKEN ", identified)
+            self.tokens[key] = identified
             #regex = self.to_regex(val, 3)
 
     

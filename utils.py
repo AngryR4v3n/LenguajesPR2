@@ -22,7 +22,7 @@ def get_literal(string):
         except:
             print('Error, no ending of string literal')
             break
-        if char == '"' or char == "'":
+        if char == '"':
             quoteCounter += 1 
         toReturn += char
         counter += 1
@@ -45,7 +45,7 @@ def operands_identifier(value):
             continue
 
 
-        if char == '"' or char == "'":
+        if char == '"':
             count += 1
             if count % 2 != 0: 
                 val, skip = get_literal(value[i:])
@@ -113,57 +113,80 @@ def operands_identifier(value):
     return toBeIdentified
 
 
-def operands_identifier_v2(value):
-    inOp = False
-    operand = ""
-    operator = ""
-    start_op = ["{", "[", "("]
-    close_op = ["}", "]", ")"]
-    count = 0
-    toBeIdentified = []
-    for char in value:
-        #agregamos primer operador 
-        if char == '"':
-            count += 1
-        if char in start_op and count % 2 == 0:
-            inOp = True
+def complex_operators_eval(value, positions = []):
+    operators = ["{","["]
+    closing = ["}", "]"]
+    semiParsed = None
+    for i in range(len(value)):
+        char = value[i]
+        if char in operators:
+            #guardamos posiciones de opening..
+            positions.append(i)
+        
+        elif char in closing:
+            #pop del ultimo y evaluar..
+            startPosition = positions.pop()
+            if value[i] == "}":
+                semiParsed = value[:startPosition] +  "(" + value[startPosition+1:i] + ")" + BuilderEnum.KLEENE.value + value[i:-1]
+            elif value[i] == "]":
+                semiParsed = value[:startPosition] + "("+ "(" + value[startPosition+1:i] + ")" + BuilderEnum.OR.value + "&" +")" + value[i+1:]
+            break
+    
+    if len(positions) > 0 and semiParsed:
+        final = complex_operators_eval(semiParsed, positions)
 
-            if operand != "":
+    if not semiParsed:
+        return value
+    
+    return final
+
+        
+
+def simple_operators(value):
+    quoteCounter = 0
+    position = []
+    for i in range(len(value)):
+        ch = value[i]
+        if ch == '"':
+            quoteCounter += 1
+        #es normal.. (no es string)
+        if quoteCounter % 2 == 0 and quoteCounter == 0:
+            if ch == "|":
+                parsed = value[:i] + BuilderEnum.OR.value + value[i+1:]
+
+        elif quoteCounter % 2 == 0:
+            if ch == "|":
                 
-                toBeIdentified.append(operand)
-                operand = ""
+                parsed = value[:i] + BuilderEnum.OR.value + value[i+1:]
+    
+    return parsed
+
+def identifier(value, dictionary):
+    word = ""
+    exclude = BuilderEnum.ALL_OPERATORS.value
+    counter=0
+    parsed =""
+    for i in range(len(value)):
+        ch = value[i]
+        if ch not in BuilderEnum.ALL_OPERATORS.value:
+            word += ch
+        elif ch in BuilderEnum.ALL_OPERATORS.value and word != "":
+            x = identify_char(word, dictionary, True)
+            parsed = parsed + x 
+            parsed += ch
+            word = ""
+        elif ch in BuilderEnum.ALL_OPERATORS.value and word == "":
+            parsed +=ch
+    
+    return parsed
+
 
             
-            operator = char
-            toBeIdentified.append(operator)
-            operator = ""
-
             
 
-        elif char in close_op and count % 2 == 0:
-            inOp = False
-            if operand != "":
-                
-                toBeIdentified.append(operand)
-                operand = ""
-            
-            operator = char
-            toBeIdentified.append(operator)
-            operator = ""
-        else:
-            inOp = False
-        if not inOp and char and char not in close_op and char !=" ":
-            operand += char
 
-        elif not inOp and char and char != " " and count % 2 != 0:
-            operand += char
 
-        if operand == "EXCEPT":
-            toBeIdentified.append(operand)
-            operand = ""
-    if len(operand) > 0:
-        toBeIdentified.append(operand)
-    return toBeIdentified
+
 
 
 """
@@ -173,15 +196,15 @@ def to_regex(string, case):
     if case == 1:
         
         sentence = ""
-        quotes = ["'", '"']
-        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"', "'"]
+        
+        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"']
         counter = 0 
         for i in range(len(string) - 1):
             char = string[i]
             sentence += string[i]
-            if char in quotes:
+            if char == '"':
                 counter += 1
-            if counter % 2 == 0 and counter > 0 and char in quotes:
+            if counter % 2 == 0 and counter > 0 and char == '"':
                 sentence += BuilderEnum.OR.value
             if string[i+1] not in notToAdd and string[i] not in notToAdd:
                 

@@ -12,4 +12,4 @@ class BuilderEnum(Enum):
     ASK = "ε" # -> ?
     HASH = "ζ"
 
-    ALL_OPERATORS = [KLEENE, PLUS, OR, CONCAT, ASK]
+    ALL_OPERATORS = [KLEENE, PLUS, OR, CONCAT, ASK, HASH, LEFT_PARENS, RIGHT_PARENS]

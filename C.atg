@@ -24,7 +24,7 @@ do = "do".
 
 TOKENS
 
-
+number2 = digit{hexdigit|[hexterm]}.
 hexnumber = hexdigit{hexdigit}hexterm.
 number = digit{digit}.
 
