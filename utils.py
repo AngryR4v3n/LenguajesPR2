@@ -158,17 +158,16 @@ def simple_operators(value):
             if ch == "|":
                 parsed = value[:i] + BuilderEnum.OR.value + value[i+1:]
 
-            else: 
-                parsed = value
+        
 
         elif quoteCounter % 2 == 0:
             if ch == "|":
                 
                 parsed = value[:i] + BuilderEnum.OR.value + value[i+1:]
 
-            else:
-                parsed = value
-    
+            
+    if parsed == "":
+        parsed = value
     return parsed
 
 def identifier(value, dictionary):
@@ -176,6 +175,12 @@ def identifier(value, dictionary):
     exclude = BuilderEnum.ALL_OPERATORS.value
     counter=0
     parsed =""
+    isExcept = False
+    #revisamos si contiene except keywords..
+    if value.find("EXCEPT KEYWORDS") > -1:
+        value = value.replace("EXCEPT KEYWORDS", "")
+        isExcept = True
+
     for i in range(len(value)):
         ch = value[i]
         if ch not in BuilderEnum.ALL_OPERATORS.value:
@@ -192,7 +197,7 @@ def identifier(value, dictionary):
     if word != "":
         parsed += identify_char(word, dictionary, True)
     
-    return parsed
+    return parsed, isExcept
 
 
             

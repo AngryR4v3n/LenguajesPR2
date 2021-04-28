@@ -1,34 +1,23 @@
 COMPILER Aritmetica    
-	
-(.
-/*--------------Scanner Especification----------*/
-.)
 
 CHARACTERS 
-digit = 0123 .
-sign ='+' + '-'. 
 
-upletter = 'A' .. 'C'.
-downletter = 'a' .. 'c'.
-letter = "abc" + upletter + downletter. 
-
-hexdigit = digit + "ABCDEF".
-hexterm = 'H'.
-
-
+letter = "ABC". 
+digit = "012" .
+tab = CHR(9).
+eol = CHR(10).
 
 KEYWORDS
 
 while = "while".
 do = "do".
+if = "if".
+switch = "switch"
 
 TOKENS
 
-
-hexnumber = hexdigit{hexdigit}hexterm.
+ident = letter{letter|digit}.
 number = digit{digit}.
 
-
-
-
+PRODUCTIONS 
 END Aritmetica

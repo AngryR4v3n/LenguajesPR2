@@ -26,7 +26,7 @@ class ATGParser():
         
         keys = self.ATG.tokens.keys()
         for key in keys:
-            toConvert = self.ATG.tokens[key]
+            toConvert = self.ATG.tokens[key]["token"]
             all_tree.append(toConvert)
         
         """

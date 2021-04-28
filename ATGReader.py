@@ -64,22 +64,20 @@ class ATGReader():
     """
     def get_characters(self, parsing, limit):
     
-        elapsed_cycles = 0
+        elapsed_cycles = self.counter
         #revisamos donde estamos
-        currentLine = self.words[self.counter]
+        currentLine = self.words[elapsed_cycles]
         #mientras no lleguemos a seccion de tokens...
-        while self.counter < len(self.words):
+        while elapsed_cycles < len(self.words):
             
-            self.counter += 1
+            
             elapsed_cycles += 1
             #limpiamos de caracteres vacios al inicio o final
-            currentLine = self.words[self.counter].strip()
+            currentLine = self.words[elapsed_cycles].strip()
 
             if len(currentLine) > 0:
                 
-                if currentLine.split()[0] == limit:
-                    self.counter = self.counter - elapsed_cycles
-                    break
+                
                     #chequeamos estructura gramatical y posibles operadores
                     
                 result = self.grammar_and_op_check(currentLine)
@@ -198,6 +196,7 @@ class ATGReader():
 
     def tokens_to_regex(self):
         keys = self.tokens.keys()
+        isExcept = False
         for key in keys:
             val = self.tokens[key]
             print("Processed TOKENS", val)
@@ -206,13 +205,13 @@ class ATGReader():
             #simples |
             translated = utils.simple_operators(reduced)
             #identificar variables
-            identified = utils.identifier(translated, self.characters)
+            identified, isExcept = utils.identifier(translated, self.characters)
             
 
             
             #sentence = utils.evaluate_characters(separated, self.characters, True)
             print("Final TOKEN ", identified)
-            self.tokens[key] = identified
+            self.tokens[key] = {"token":identified, "isExcept": isExcept}
             #regex = self.to_regex(val, 3)
 
     

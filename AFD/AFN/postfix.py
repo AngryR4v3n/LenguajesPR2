@@ -147,9 +147,11 @@ class Postfixer:
                     last_elem = pushStack[-1]
                     if last_elem == BuilderEnum.KLEENE.value and expr[i] == BuilderEnum.KLEENE.value:
                         isOk = False
+                """
                 if(expr[i] == BuilderEnum.KLEENE.value and expr[i+1] == ")"):
                     pushStack.append(")")
                     pushStack.append(BuilderEnum.KLEENE.value)
+                """
                 
                 if(expr[i] == "(") and (i != 0) and self.is_operand(expr[i-1]) and self.is_operand(expr[i+1]):
                 
