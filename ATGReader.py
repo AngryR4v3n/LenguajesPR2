@@ -174,7 +174,7 @@ class ATGReader():
         for key in keys:
             val = self.characters[key]
             # number + A ->  number + A -> [+, 012345668, A]
-            separated = utils.operands_identifier(val)
+            separated = utils.operands_identifier(val.strip())
             sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
             if sentence.find(BuilderEnum.OR.value) ==  -1:

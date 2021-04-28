@@ -22,7 +22,7 @@ def get_literal(string):
         except:
             print('Error, no ending of string literal')
             break
-        if char == '"':
+        if char == '"' or char == "'": 
             quoteCounter += 1 
         toReturn += char
         counter += 1
@@ -45,7 +45,7 @@ def operands_identifier(value):
             continue
 
 
-        if char == '"':
+        if char == '"' or char == "'":
             count += 1
             if count % 2 != 0: 
                 val, skip = get_literal(value[i:])
@@ -117,6 +117,7 @@ def complex_operators_eval(value, positions = []):
     operators = ["{","["]
     closing = ["}", "]"]
     semiParsed = None
+    final = None
     for i in range(len(value)):
         char = value[i]
         if char in operators:
@@ -127,7 +128,7 @@ def complex_operators_eval(value, positions = []):
             #pop del ultimo y evaluar..
             startPosition = positions.pop()
             if value[i] == "}":
-                semiParsed = value[:startPosition] +  "(" + value[startPosition+1:i] + ")" + BuilderEnum.KLEENE.value + value[i:-1]
+                semiParsed = "("+value[:startPosition] +  "(" + value[startPosition+1:i] + ")" + BuilderEnum.KLEENE.value+ ")" + value[i+1:]
             elif value[i] == "]":
                 semiParsed = value[:startPosition] + "("+ "(" + value[startPosition+1:i] + ")" + BuilderEnum.OR.value + "&" +")" + value[i+1:]
             break
@@ -137,6 +138,8 @@ def complex_operators_eval(value, positions = []):
 
     if not semiParsed:
         return value
+    elif semiParsed and not final:
+        return semiParsed
     
     return final
 
@@ -145,6 +148,7 @@ def complex_operators_eval(value, positions = []):
 def simple_operators(value):
     quoteCounter = 0
     position = []
+    parsed = ""
     for i in range(len(value)):
         ch = value[i]
         if ch == '"':
@@ -154,10 +158,16 @@ def simple_operators(value):
             if ch == "|":
                 parsed = value[:i] + BuilderEnum.OR.value + value[i+1:]
 
+            else: 
+                parsed = value
+
         elif quoteCounter % 2 == 0:
             if ch == "|":
                 
                 parsed = value[:i] + BuilderEnum.OR.value + value[i+1:]
+
+            else:
+                parsed = value
     
     return parsed
 
@@ -177,6 +187,10 @@ def identifier(value, dictionary):
             word = ""
         elif ch in BuilderEnum.ALL_OPERATORS.value and word == "":
             parsed +=ch
+
+
+    if word != "":
+        parsed += identify_char(word, dictionary, True)
     
     return parsed
 
@@ -196,15 +210,15 @@ def to_regex(string, case):
     if case == 1:
         
         sentence = ""
-        
-        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"']
+        quotes = ["'", '"']
+        notToAdd = [")", "(", BuilderEnum.OR.value, BuilderEnum.CONCAT.value, '"', "'"]
         counter = 0 
         for i in range(len(string) - 1):
             char = string[i]
             sentence += string[i]
-            if char == '"':
+            if char in quotes:
                 counter += 1
-            if counter % 2 == 0 and counter > 0 and char == '"':
+            if counter % 2 == 0 and counter > 0 and char in quotes:
                 sentence += BuilderEnum.OR.value
             if string[i+1] not in notToAdd and string[i] not in notToAdd:
                 
@@ -245,7 +259,7 @@ def identify_char(chars, diction, isTokens):
     keys = diction.keys()
     for key in keys:
         if chars == key:
-            return diction[key]
+            return "(" + diction[key] + ")"
 
     #si posiciones esta vacia, es un operador. Si no, es un string que hay que a|b|c.. 
 

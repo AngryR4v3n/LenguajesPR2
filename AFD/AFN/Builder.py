@@ -9,6 +9,7 @@ class Builder():
         self.next_char()
         self.tokensArr =[]
         self.operators = BuilderEnum.ALL_OPERATORS.value
+        self.operators.pop(5)
         self.parens = ["(", ")"]
         self.enums = BuilderEnum
         self.counter = 0
@@ -43,7 +44,7 @@ class Builder():
         while self.char != None:
             token = None
             #caso 0: tenemos un string literal! 
-            if(self.char == '"'):
+            if(self.char == '"') or (self.char == "'"):
                 self.counter += 1
 
             

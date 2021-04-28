@@ -12,10 +12,11 @@ class ATGParser():
 
     def main_tree(self):
         all_tree = []
-        """
+        
         keys = self.ATG.characters.keys()
         
         hashType = ""
+        """
         for key in keys:
             hashType = f"CHARACTER - {key}"
             toConvert = self.ATG.characters[key]
