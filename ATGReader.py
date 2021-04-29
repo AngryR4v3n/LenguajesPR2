@@ -175,11 +175,10 @@ class ATGReader():
             separated = utils.operands_identifier(val.strip())
             sentence = utils.evaluate_characters(separated, self.characters, False)
             print("Processed CHAR", sentence)
-            if sentence.find(BuilderEnum.OR.value) ==  -1:
-                regex = utils.to_regex(sentence, 1)
-            else:
-                regex = sentence
-            self.characters[key] = regex
+            
+            regex = utils.to_regex(sentence, 1)
+            
+            self.characters[key] = "(" + regex + ")"
             print("Final CHAR", regex)
 
             

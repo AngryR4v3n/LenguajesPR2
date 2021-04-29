@@ -41,7 +41,7 @@ class Transition:
         self.index = data
 
     def __repr__(self):
-        return f'Transition({self.start}, "{self.transition}",{self.end}, {self.type})\n'
+        return f'Transition({self.start}, {repr(self.transition)},{self.end}, {self.type})\n'
 
     def __eq__(self, other):
         return self.start == other.start and self.end == other.end and self.transition == other.transition

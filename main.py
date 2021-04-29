@@ -41,21 +41,27 @@ def reader_tester():
             response.append(r)
             r = automata.simulate_DFA(response[-1], c)
             
-        else:
+        elif not r and len(response) > 0:
             tokens.append(response.pop())
             print("finished token", response)
             r= automata.simulate_DFA(None, c)
+
+        else:
+            break
     
 
     if r:
         response.append(r)
         r = automata.simulate_DFA(response[-1], c)
         
-    else:
+    elif not r and len(response) > 0:
         tokens.append(response.pop())
         r= automata.simulate_DFA(None, c)
         tokens.append(r)
-    if len(tokens) == 0:
+
+    else: 
+        print("No tokens.")
+    if len(tokens) == 0 and len(response) > 0:
         tokens.append(response.pop())
     print("Finished", tokens)
     """

@@ -186,6 +186,7 @@ def identifier(value, dictionary):
         if ch not in BuilderEnum.ALL_OPERATORS.value:
             word += ch
         elif ch in BuilderEnum.ALL_OPERATORS.value and word != "":
+            word = word.strip()
             x = identify_char(word, dictionary, True)
             parsed = parsed + x 
             parsed += ch
@@ -195,6 +196,7 @@ def identifier(value, dictionary):
 
 
     if word != "":
+        word = word.strip()
         parsed += identify_char(word, dictionary, True)
     
     return parsed, isExcept
@@ -264,7 +266,7 @@ def identify_char(chars, diction, isTokens):
     keys = diction.keys()
     for key in keys:
         if chars == key:
-            return "(" + diction[key] + ")"
+            return diction[key]
 
     #si posiciones esta vacia, es un operador. Si no, es un string que hay que a|b|c.. 
 
@@ -276,9 +278,6 @@ def identify_char(chars, diction, isTokens):
         positions = find_all_positions(chars, '"')
         if len(positions) > 0 and isTokens:
             chars = to_regex(chars, 3)
-
-        elif len(positions) > 0 and not isTokens:
-            chars = to_regex(chars, 1)
         
     return chars
     
@@ -366,21 +365,18 @@ def evaluate_characters(array, mode, isTokens):
             stack.insert(0, sentence)
             
         elif op == "+": 
-            first = stack.pop(0).strip().replace('"', "")
-            second = stack.pop(0).strip().replace('"', "")
-            sentence += "("
-            sentence += first
-            sentence += ")"
-            sentence += BuilderEnum.CONCAT.value
-            sentence += "("
-            sentence += second
-            sentence += ")"
-            stack.insert(0,sentence)
+            first = stack.pop(0).replace('"', "").replace("(", "").replace(")", '')
+            second = stack.pop(0).replace('"', "").replace("(", "").replace(")", '')
+            
+            sentence = first + BuilderEnum.OR.value + second 
+            sentence = ''.join(str(sentence))
+            stack.insert(0, sentence)
+        
 
         elif op == "..":
             first = stack.pop(0).replace('"', "")
             second = stack.pop(0).replace('"', "")
-            sentence += "(" + get_alphabet_set(first, second) + ")"
+            sentence += get_alphabet_set(first, second)
             stack.insert(0, sentence)
             
 
