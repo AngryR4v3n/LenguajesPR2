@@ -64,12 +64,23 @@ def reader_tester():
     if len(tokens) == 0 and len(response) > 0:
         tokens.append(response.pop())
     print("Finished", tokens)
+
+    return tokens
     """
 
-
+printer = """\n
+def token_print(tokens):
+    for token in tokens:
+        name = token.type.keys()
+        name = list(name)
+        print(f"<Token w/id: {name}>")
+"""
 scanner.write(reading)
-readerCall = """\nreader_tester()"""
+scanner.write(printer)
+readerCall = """\nx = reader_tester()"""
+printerCall = """\ntoken_print(x)"""
 scanner.write(readerCall)
+scanner.write(printerCall)
 
 
 #atgAutomatas.convert_characters()

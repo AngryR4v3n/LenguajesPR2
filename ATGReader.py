@@ -202,6 +202,9 @@ class ATGReader():
             print("Processed TOKENS", val)
             #complejos {} []
             reduced = utils.complex_operators_eval(val)
+
+            while reduced.find("}") > -1 or reduced.find("]") > -1:
+                reduced = utils.complex_operators_eval(reduced)
             #simples |
             translated = utils.simple_operators(reduced)
             #identificar variables

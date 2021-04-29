@@ -1,23 +1,34 @@
 COMPILER Aritmetica    
+	
+(.
+/*--------------Scanner Especification----------*/
+.)
 
 CHARACTERS 
 
-letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz". 
-digit = "0123456789" .
+upletter = 'A' .. 'C'.
+downletter = 'a' .. 'c'.
+letter = "abc" + upletter + downletter. 
+digit = "012" .
+hexdigit = digit + "ABCDEF".
+hexterm = 'H'.
 tab = CHR(9).
 eol = CHR(10).
+whitespace = CHR(13)+eol+tab+CHR(13).
+sign ='+'+'-'.
 
 KEYWORDS
 
 while = "while".
 do = "do".
-if = "if".
-switch = "switch"
 
 TOKENS
 
 ident = letter{letter|digit} EXCEPT KEYWORDS.
+hexnumber = hexdigit{hexdigit}hexterm EXCEPT KEYWORDS.
 number = digit{digit}.
+signnumber = [sign]digit{digit}.
+whitetoken = whitespace{whitespace}
 
 
 END Aritmetica
