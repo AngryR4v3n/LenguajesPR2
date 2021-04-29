@@ -202,14 +202,6 @@ def identifier(value, dictionary):
     return parsed, isExcept
 
 
-            
-            
-
-
-
-
-
-
 """
 Given a string like abc -> (a|b|c)
 """
@@ -451,4 +443,36 @@ def get_alphabet_set(initial, final):
             break
         
     return toReturn
+
+def cleaner(value, key, compilerName):
+    answer=""
+    
+    if compilerName == "MyCOCOR":
+        if key == "ident":
+            answer="AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγzδ(AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγzγ0γ1γ2γ3γ4γ5γ6γ7γ8γ9)α)"
+
+        elif key == "string":
+            answer='`γ!γ#γ$γ%γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡δ(!γ#γ$γ%γ&γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡)α`'
+
+        elif key == "char":
+            answer = "`δ(/γ&)δ(AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγz)δ`"
+
+        elif key == "charnumber":
+            answer = "CHR((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδ)"
+
+        elif key == "charinterval":
+            answer = "CHR((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδ) δ.δ.δ CHR((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδ)"
+
+        elif key == "nontoken":
+            answer = "`γ!γ#γ$γ%γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡δ(!γ#γ$γ%γ&γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡"
+
+        elif key == "startcode":
+            answer = '"(."'
+        elif key == "endcode":
+            answer = '".)"'
+
+    else: 
+        answer=value
+
+    return answer
                 

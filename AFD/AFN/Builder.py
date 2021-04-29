@@ -50,13 +50,25 @@ class Builder():
             
             
             #caso 1: tenemos un token de tipo simbolo
-            if (self.char not in self.operators and self.char and self.char != '"'):
+            if (self.char not in self.operators and self.char and self.char != '"') or (self.counter % 2 != 0):
 
                 if (self.counter % 2 != 0 and self.char and self.counter > 0):
                     if(self.char == self.enums.HASH.value):
                         
                         token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.get_identifier(self.hashNumb))
                         self.hashNumb += 1
+                    elif self.char == '"':
+                        token = None
+                    elif self.char in self.operators and self.char != '(' and self.char != ')':
+                        if self.char == self.enums.KLEENE.value:
+                            token = Token.Tokenizer(type_t=self.enums.KLEENE.value, value=None)
+                        elif self.char == self.enums.PLUS.value:
+                            token = Token.Tokenizer(type_t=self.enums.PLUS.value, value=None)
+                        elif self.char == self.enums.OR.value:
+                            token = Token.Tokenizer(type_t=self.enums.OR.value, value=None)
+                        elif self.char == self.enums.CONCAT.value:
+                            token = Token.Tokenizer(type_t=self.enums.CONCAT.value, value=None)
+
                     else:
                         token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
                 elif (self.counter % 2 == 0 and self.char):

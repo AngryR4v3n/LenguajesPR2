@@ -177,6 +177,7 @@ class ATGReader():
             print("Processed CHAR", sentence)
             
             regex = utils.to_regex(sentence, 1)
+            regex = regex.replace('"', "")
             
             self.characters[key] = "(" + regex + ")"
             print("Final CHAR", regex)
@@ -205,12 +206,13 @@ class ATGReader():
             translated = utils.simple_operators(reduced)
             #identificar variables
             identified, isExcept = utils.identifier(translated, self.characters)
+            clean = utils.cleaner(identified, key, self.compilerName)
             
 
             
             #sentence = utils.evaluate_characters(separated, self.characters, True)
-            print("Final TOKEN ", identified)
-            self.tokens[key] = {"token":identified, "isExcept": isExcept}
+            print("Final TOKEN ", clean)
+            self.tokens[key] = {"token":clean, "isExcept": isExcept}
             #regex = self.to_regex(val, 3)
 
     

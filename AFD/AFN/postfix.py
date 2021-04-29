@@ -38,11 +38,8 @@ class Postfixer:
                 return False
 
         else:
-            if(ch not in self.operators) and ch != '"':
-                return True
-
-            else: 
-                return False
+            
+            return True
 
 
 
@@ -175,9 +172,9 @@ class Postfixer:
                 """
 
             else:
-                if(self.is_operand(expr[i], True) and self.is_operand(expr[i+1], True)):
+                if(self.is_operand(expr[i], True) and self.is_operand(expr[i+1], True) and expr[i+1] != '"') and expr[i] != '"':
                     
-                    posToInsert.append(i)
+                    posToInsert.append(i+1)
 
             if(isOk):
                 fixed +=expr[i]
@@ -216,7 +213,7 @@ class Postfixer:
                 counter += 1
             
             if counter % 2 == 0 or counter == 0:
-                if self.is_operand(ch):
+                if self.is_operand(ch) or ch == '"':
                     self.output.append(ch)
 
                 elif ch == self.enums.LEFT_PARENS.value:
@@ -258,11 +255,7 @@ class Postfixer:
                 if self.is_operand(ch, True):
                     self.output.append(ch)
                     continue
-                #operador dentro string literal
-                elif ch != '"':
-                    while(not self.stack.is_empty() and self.check_precedence(ch)):
-                        self.output.append(self.stack.pop())
-                    self.stack.add(ch)
+                
 
                             
         while not self.stack.is_empty():
