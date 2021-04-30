@@ -889,9 +889,17 @@ automata = Automata([],['a', 'b', 'c', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', '
 , Transition([192, 193, 194, 195, 196, 197, 198, 188, 189, 190, 191], None,None, {'signnumber': 198})
 ])
 tokens = {'ident': {'token': '((aγbγcγAγBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγoγpγqγrγsγtγuγvγwγxγyγz)((aγbγcγAγBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγoγpγqγrγsγtγuγvγwγxγyγz)γ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9))α)', 'isExcept': True}, 'hexnumber': {'token': '((0γ1γ2γ3γ4γ5γ6γ7γ8γ9γAγBγCγDγEγF)((0γ1γ2γ3γ4γ5γ6γ7γ8γ9γAγBγCγDγEγF))α)(H)', 'isExcept': True}, 'number': {'token': '((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)((0γ1γ2γ3γ4γ5γ6γ7γ8γ9))α)', 'isExcept': False}, 'signnumber': {'token': '((((+γ-))γ&)(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)((0γ1γ2γ3γ4γ5γ6γ7γ8γ9))α)', 'isExcept': False}, 'whitetoken': {'token': '((\rγ\nγ\tγ\r)((\rγ\nγ\tγ\r))α)', 'isExcept': False}}
+keywords = {'while': 'wδhδiδlδe', 'do': 'dδo'}
 
 
 
+
+
+def keyword_search(string):
+    for elem in keywords.keys():
+        if string == elem:
+            return elem
+    return None
 f = open('test.txt', 'r')
 
 def reader_tester():
@@ -903,11 +911,20 @@ def reader_tester():
             allowed = True
 
             if allowed:
-                print(" ->  ",repr(resultado), "identified", list(aceptacion.type.keys())[0], " <-")
+                identifier = list(aceptacion.type.keys())[0]
+                #obtenemos el token
+                tkk = tokens[identifier]
+                #buscamos en los keywords
+                if tkk["isExcept"]:
+                    key=keyword_search(resultado)
+                    if key:
+                        print(" ->  ",repr(resultado), "identified keyword", key, " <-")
+                    else:
+                        print(" ->  ",repr(resultado), "identified", identifier, " <-")
+                else:    
+                    print(" ->  ",repr(resultado), "identified", identifier, " <-")
         else:
             print(" ->  ",repr(resultado), "unidentified string of chars <-")
-        
     
 
 x = reader_tester()    
-x = reader_tester()

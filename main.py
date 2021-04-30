@@ -27,9 +27,20 @@ states, language, start, end, fn = atgAutomatas.main_tree()
 buildAutomata = f"""
 automata = Automata({states},{language}, {start}, {end}, {fn})
 tokens = {reader.tokens}
+keywords = {reader.keywords}
 """
 scanner.write(buildAutomata)
 scanner.write("\n"*3)
+
+
+keysearch = """\n
+def keyword_search(string):
+    for elem in keywords.keys():
+        if string == elem:
+            return elem
+    return None\n"""
+scanner.write(keysearch)
+
 reading = """f = open('test.txt', 'r')
 
 def reader_tester():
@@ -41,16 +52,26 @@ def reader_tester():
             allowed = True
 
             if allowed:
-                print(" ->  ",repr(resultado), "identified", list(aceptacion.type.keys())[0], " <-")
+                identifier = list(aceptacion.type.keys())[0]
+                #obtenemos el token
+                tkk = tokens[identifier]
+                #buscamos en los keywords
+                if tkk["isExcept"]:
+                    key=keyword_search(resultado)
+                    if key:
+                        print(" ->  ",repr(resultado), "identified keyword", key, " <-")
+                    else:
+                        print(" ->  ",repr(resultado), "identified", identifier, " <-")
+                else:    
+                    print(" ->  ",repr(resultado), "identified", identifier, " <-")
         else:
             print(" ->  ",repr(resultado), "unidentified string of chars <-")
-        
     
 
 x = reader_tester()    """
 scanner.write(reading)
-readerCall = """\nx = reader_tester()"""
-scanner.write(readerCall)
+
+
 
 
 #atgAutomatas.convert_characters()
