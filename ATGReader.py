@@ -19,7 +19,7 @@ class ATGReader():
         self.tokens = {}
         self.compilerName = ""
         self.counter = 0
-
+        self.ignore = []
     """
     Gets called to start analyzing the ATG file, reads line per line checking first word of each line
     """
@@ -47,7 +47,17 @@ class ATGReader():
 
             self.counter += 1 
     
-    
+    def get_ignore(self, line):
+        spl = line.split("IGNORE SET")
+        mySet = spl[1].strip()
+        mySet = utils.identify_char(mySet, self.characters, False)
+        mySet=mySet.replace(BuilderEnum.OR.value, "")
+        mySet=mySet.replace("(", "")
+        mySet=mySet.replace(")","")
+        mySet=list(mySet)
+        print("mySet", mySet)
+        self.ignore = mySet
+
     """
     Gets the compiler name from the ATG file, and modifies compilerName property.
     PARAMS: 
@@ -81,7 +91,9 @@ class ATGReader():
                     #chequeamos estructura gramatical y posibles operadores
                     
                 result = self.grammar_and_op_check(currentLine)
-
+                if currentLine.find("IGNORE SET") > -1:
+                    self.get_ignore(currentLine)
+                    continue
                 if result != None:
 
                     #agregamos segun sea el caso

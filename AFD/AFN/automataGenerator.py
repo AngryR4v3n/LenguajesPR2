@@ -47,7 +47,7 @@ def single(regex, hashType):
     parser = Parser()
     return parser.parse(tokens, "AFD", False, hashType)
 
-def whole_regex(arrRegex, dictionary):
+def whole_regex(arrRegex, dictionary, draw):
     main_tree = ""
     for regex in arrRegex:
         main_tree += "("+ regex + ")" + f"{BuilderEnum.CONCAT.value}{BuilderEnum.HASH.value}" + f"{BuilderEnum.OR.value}"
@@ -63,7 +63,10 @@ def whole_regex(arrRegex, dictionary):
     tokens = builder.getTokenArr()
     print("Tokens -> Regex:", tokens)
     parser = Parser()
-    return parser.parse(tokens, "AFD", True)
+    if draw:
+        return parser.parse(tokens, "AFD", True)
+    else:
+        return parser.parse(tokens, "AFD", False)
     
     
 def test():

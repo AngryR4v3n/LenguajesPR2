@@ -107,8 +107,11 @@ class Automata:
 
         print(S)
     
-    def simulate_DFA(self, string, pos):
+    def simulate_DFA(self, string, pos, ignore):
         S = self.start
+        if string[pos] in ignore:
+            pos += 1
+            
         S = self.traverse_dfa(S, string[pos], isInit=True)
         token = string[pos]
         keepGoing = True
@@ -123,11 +126,9 @@ class Automata:
             aceptacion = S
 
         while keepGoing and i < len(string):
-            """
-            if exp[i] in ignores:
+            if string[i] in ignore:
                 i += 1
                 continue
-            """
             token += string[i]
             S = self.traverse_dfa(S, string[i])
 

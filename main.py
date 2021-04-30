@@ -28,6 +28,7 @@ buildAutomata = f"""
 automata = Automata({states},{language}, {start}, {end}, {fn})
 tokens = {reader.tokens}
 keywords = {reader.keywords}
+ignoreChars = {reader.ignore}
 """
 scanner.write(buildAutomata)
 scanner.write("\n"*3)
@@ -47,7 +48,7 @@ def reader_tester():
     x = f.read()
     pos = 0
     while pos < len(x):
-        resultado, pos, aceptacion = automata.simulate_DFA(x, pos)
+        resultado, pos, aceptacion = automata.simulate_DFA(x, pos, ignoreChars)
         if aceptacion:
             allowed = True
 

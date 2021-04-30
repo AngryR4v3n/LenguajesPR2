@@ -1,34 +1,34 @@
-COMPILER Aritmetica    
-	
-(.
-/*--------------Scanner Especification----------*/
-.)
+COMPILER MyCOCOR
+(.//Especificacion de Funciones.)
+CHARACTERS
 
-CHARACTERS 
+letter= "ABCDEFGHIJKLMN�OPQRSTUVWXYZabcdefghijklmn�opqrstuvwxyz".
+digit= "0123456789".
 
-upletter = 'A' .. 'Z'.
-downletter = 'a' .. 'z'.
-letter = "abc" + upletter + downletter. 
-digit = "0123456789" .
-hexdigit = digit + "ABCDEF".
-hexterm = 'H'.
+cr = CHR(13).
+lf = CHR(10).
 tab = CHR(9).
-eol = CHR(10).
-whitespace = CHR(13)+eol+tab+CHR(13).
-sign ='+'+'-'.
+ignore = cr+lf+tab.
+comillas = CHR(34).
+stringletter = ANY-comillas-ignore.
 
-KEYWORDS
-
-while = "while".
-do = "do".
+operadores ="+-=()[]{}|.<>".
+MyANY = ANY-operadores.
 
 TOKENS
 
 ident = letter{letter|digit} EXCEPT KEYWORDS.
-hexnumber = hexdigit{hexdigit}hexterm EXCEPT KEYWORDS.
-number = digit{digit}.
-signnumber = [sign]digit{digit}.
-whitetoken = whitespace{whitespace}.
+string = comillas stringletter{stringletter} comillas.
+
+char = "'"["/"]letter"'".
+charnumber = "CHR("digit{digit}")".
+charinterval = "CHR("digit{digit}")""..""CHR("digit{digit}")".
+
+nontoken = MyANY.
+startcode ="(.".
+endcode=".)".
+
+IGNORE SET ignore
 
 
-END Aritmetica
+END MyCOCOR

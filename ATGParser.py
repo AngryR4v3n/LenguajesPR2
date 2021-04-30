@@ -22,8 +22,10 @@ class ATGParser():
             all_tree.append(toConvert)
         
 
-
-        automata = automataGenerator.whole_regex(all_tree, self.ATG.tokens)
+        if self.ATG.compilerName == "MyCOCOR":
+            automata = automataGenerator.whole_regex(all_tree, self.ATG.tokens, False)
+        else:
+            automata = automataGenerator.whole_regex(all_tree, self.ATG.tokens, True)
         return automata.states, automata.language, automata.start, automata.end, automata.fn
 
 
