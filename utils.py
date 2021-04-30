@@ -444,6 +444,9 @@ def get_alphabet_set(initial, final):
         
     return toReturn
 
+
+    
+
 def cleaner(value, key, compilerName):
     answer=""
     
@@ -470,6 +473,12 @@ def cleaner(value, key, compilerName):
             answer = '"(."'
         elif key == "endcode":
             answer = '".)"'
+
+    elif compilerName == "Double":
+        if key == "decnumber":
+            answer = "(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)δ((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)α)δ.δ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)δ((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)α)"
+        else:
+            answer = value
 
     else: 
         answer=value

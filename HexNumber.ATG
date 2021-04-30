@@ -6,8 +6,8 @@ COMPILER Aritmetica
 
 CHARACTERS 
 
-upletter = 'A' .. 'Z'
-downletter = 'a' .. 'z'
+upletter = 'A' .. 'Z'.
+downletter = 'a' .. 'z'.
 letter = "abcdefghijklmnopqrstuvwxyz" + upletter + downletter. 
 digit = "0123456789" .
 hexdigit = digit + "ABCDEF".
@@ -28,7 +28,7 @@ ident = letter{letter|digit} EXCEPT KEYWORDS.
 hexnumber = hexdigit{hexdigit}hexterm EXCEPT KEYWORDS.
 number = digit{digit}.
 signnumber = [sign]digit{digit}.
-whitetoken = whitespace{whitespace}
+whitetoken = whitespace{whitespace}.
 
 
 END Aritmetica

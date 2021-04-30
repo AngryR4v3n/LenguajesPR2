@@ -893,21 +893,71 @@ tokens = {'ident': {'token': '((aγbγcγAγBγCγDγEγFγGγHγIγJγKγLγMγ
 
 
 f = open('test.txt', 'r')
-
 def reader_tester():
     x = f.read()
-    pos = 0
-    while pos < len(x):
-        resultado, pos, aceptacion = automata.simulate_DFA(x, pos)
-        if aceptacion:
-            allowed = True
+    response = []
+    #
+    r = automata.simulate_DFA(None, x[0])
+    failTry=0
+    i = 0
+    tokens = []
+    invalidos = []
+    x=x[1:]
+    while i < len(x):
+        ch = x[i]
+        #Si existe, verificamos con el estado nuevo el caracter siguiente.?
+        if r:
+            response.append(r)
+            
+            r = automata.simulate_DFA(response[-1], ch)
+            if r:
+                i += 1
 
-            if allowed:
-                print(" ->  ",repr(resultado), "identified", list(aceptacion.type.keys())[0], " <-")
-        else:
-            print(" ->  ",repr(resultado), "unidentified string of chars <-")
-        
+            #Si no existia ese caracter, reiniciamos el automata
+            else: 
+                r = automata.simulate_DFA(None, ch)
+                    
+        #aqui que existe
+        if not r and len(response) > 0 and failTry == 0:
+            #aqui valido de aceptacion.
+            last = response.pop()
+            if last.type:
+                tokens.append(last)
+            else:
+                invalidos.append(last)
+
+            r = automata.simulate_DFA(None, x[i])
+            i += 1 
+            
+                
+
+
+
+    """
+    elif not r and len(response) > 0:
+        tokens.append(response.pop())
+        r= automata.simulate_DFA(None, c)
+        tokens.append(r)
+
+    else: 
+        print("No tokens.")
+    if len(tokens) == 0 and len(response) > 0:
+        tokens.append(response.pop())
+    print("Finished", tokens)
+    """
+    return tokens
     
 
-x = reader_tester()    
+def token_print(tokens):
+    for token in tokens:
+        if token.type:
+            name = token.type.keys()
+            name = list(name)
+            print(f"<Token w/id: {name}>")
+        else:
+            print(f"<Token w/id: None >")    
+            
+        
+
 x = reader_tester()
+token_print(x)

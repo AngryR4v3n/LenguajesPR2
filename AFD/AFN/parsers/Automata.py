@@ -72,6 +72,8 @@ class Automata:
         return list(set(toReturn))
 
 
+
+    # origen -> destino -> calle
     def traverse_dfa(self, state, letter, isInit=False):
         
         for st in self.fn:
@@ -105,19 +107,46 @@ class Automata:
 
         print(S)
     
-    def simulate_DFA(self, status, c):
-        trans = None
-        if not status:
+    def simulate_DFA(self, string, pos):
+        S = self.start
+        S = self.traverse_dfa(S, string[pos], isInit=True)
+        token = string[pos]
+        keepGoing = True
+        checkpoint = i = pos
+        checkpoint += 1
+        aceptacion = None
+        string = string[1:]
+
+        if not S:
+            keepGoing = False
+        elif S.get_end() in [a.get_start() for a in self.end]:
+            aceptacion = S
+
+        while keepGoing and i < len(string):
+            """
+            if exp[i] in ignores:
+                i += 1
+                continue
+            """
+            token += string[i]
+            S = self.traverse_dfa(S, string[i])
+
+            if not S:
+                keepGoing = False
+                break
+
+            if S.get_end() in [a.get_start() for a in self.end]:
+                checkpoint = i
+                aceptacion = S
+
             
-            S = self.start
-        
-            S = self.traverse_dfa(S,c, True)
+            i += 1
+            checkpoint += 1
 
-        else: 
-            S = self.traverse_dfa(status, c)
-                    
+        if len(token) != 1:
+            token = token[:-1]
 
-        return S
+        return token, checkpoint + 1, aceptacion
 
     def find_transition(self, target, char):
         for func in self.fn:
