@@ -108,23 +108,27 @@ class Automata:
         print(S)
     
     def simulate_DFA(self, string, pos, ignore):
-        S = self.start
+        S = self.fn[1]
+        checkpoint = i = pos
         if string[pos] in ignore:
             pos += 1
-            
-        S = self.traverse_dfa(S, string[pos], isInit=True)
+            checkpoint += 1
+
+        current = string[pos]
+        S = self.traverse_dfa(S, current, isInit=True)
         token = string[pos]
         keepGoing = True
-        checkpoint = i = pos
-        checkpoint += 1
+        
+        
         aceptacion = None
         string = string[1:]
 
         if not S:
             keepGoing = False
+            return token, checkpoint + 1, aceptacion
         elif S.get_end() in [a.get_start() for a in self.end]:
             aceptacion = S
-
+        checkpoint += 1
         while keepGoing and i < len(string):
             if string[i] in ignore:
                 i += 1
