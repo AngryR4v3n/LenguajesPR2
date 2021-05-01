@@ -2,7 +2,7 @@ COMPILER MyCOCOR
 (.//Especificacion de Funciones.)
 CHARACTERS
 
-letter= "ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz".
+letter= "ABCDEFGHIJKLMNï¿½OPQRSTUVWXYZabcdefghijklmnï¿½opqrstuvwxyz".
 digit= "0123456789".
 
 cr = CHR(13).

@@ -418,7 +418,6 @@ def evaluate_characters(array, mode, isTokens):
 
     return stack.pop(0)
 
-
 def get_alphabet_set(initial, final):
     if initial.islower():
         alpha = "abcdefghijklmnopqrstuvwxyz"
@@ -451,28 +450,32 @@ def cleaner(value, key, compilerName):
     answer=""
     
     if compilerName == "MyCOCOR":
+        stringLetter = 'Дγ γ!γ$γ%γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ=γ>γ?γ@γAγBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ`γaγbγcγdγeγfγgγhγiγjγkγlγmγnγoγpγqγrγsγtγuγvγwγxγyγzγ{γ~'
+        letter = "AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγz"
+        myAny = '!γ$γ%γ,γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ?γ@γAγBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ]γ^γ_γ`γaγbγcγdγeγfγgγhγiγjγkγlγmγnγoγpγqγrγsγtγuγvγwγxγyγzγ~'
         if key == "ident":
-            answer="AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγzδ(AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγzγ0γ1γ2γ3γ4γ5γ6γ7γ8γ9)α)"
+            
+            answer=f'(({letter})δ({letter})α)'
 
         elif key == "string":
-            answer='`γ!γ#γ$γ%γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡δ(!γ#γ$γ%γ&γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡)α`'
+            answer=f'Шδ(({stringLetter})δ({stringLetter})α)δШ'
 
         elif key == "char":
-            answer = "`δ(/γ&)δ(AγBγCγDγEγFγGγHγIγJγKγLγMγNγÑγOγPγQγRγSγTγUγVγWγXγYγZγaγbγcγdγeγfγgγhγiγjγkγlγmγnγñγoγpγqγrγsγtγuγvγwγxγyγz)δ`"
+            answer = f'Дδ(/γ&)δ({letter})δД'
 
         elif key == "charnumber":
-            answer = "CHR((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδ)"
+            answer = 'CHRГ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)δ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδЛ'
 
         elif key == "charinterval":
-            answer = "CHR((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδ) δ.δ.δ CHR((0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδ)"
+            answer = 'CHRГ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)δ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδЛδ.δ.δCHRГ(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)&(0γ1γ2γ3γ4γ5γ6γ7γ8γ9)αδЛ'
 
         elif key == "nontoken":
-            answer = "`γ!γ#γ$γ%γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡δ(!γ#γ$γ%γ&γ*γ+γ,γ-γ.γ/γ0γ1γ2γ3γ4γ5γ6γ7γ8γ9γ:γ;γ<γ@γ=γAγ>γ?γBγCγDγEγFγGγHγIγJγKγLγMγNγOγPγQγRγSγTγUγVγWγXγYγZγ[γ\γ]γ^γ_γ¡"
+            answer = f"{myAny}"
 
         elif key == "startcode":
-            answer = '"(."'
+            answer = 'Г.'
         elif key == "endcode":
-            answer = '".)"'
+            answer = '.Л'
 
     elif compilerName == "Double":
         if key == "decnumber":

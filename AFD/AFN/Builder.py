@@ -70,14 +70,45 @@ class Builder():
                             token = Token.Tokenizer(type_t=self.enums.CONCAT.value, value=None)
 
                     else:
-                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+                        #cierre de parens.
+                        if self.char == "Л":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=")")    
+                        #abre parens..
+                        elif self.char == "Г":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value="(")
+                        
+                        #comilla simple..
+                        elif self.char == "Д":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value="'")
+                        #comilla doble..
+                        elif self.char == "Ш":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value='"')
+                        else:
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+                        
                 elif (self.counter % 2 == 0 and self.char):
                     if(self.char == self.enums.HASH.value):
                         
                         token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char, identifier=self.get_identifier(self.hashNumb))
                         self.hashNumb += 1
+                    
                     else:
-                        token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+                        #cierre de parens.
+                        if self.char == "Л":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=")")    
+                        #abre parens..
+                        elif self.char == "Г":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value="(")
+                        
+                        #comilla simple..
+                        elif self.char == "Д":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value="'")
+                        #comilla doble..
+                        elif self.char == "Ш":
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value='"')
+                        else:
+                            token = Token.Tokenizer(type_t=self.enums.SYMBOL.value, value=self.char)
+                        
 
 
 

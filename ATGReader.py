@@ -73,7 +73,7 @@ class ATGReader():
         self-> the class.
     """
     def get_characters(self, parsing, limit):
-    
+        toClean = self.compilerName
         elapsed_cycles = self.counter
         #revisamos donde estamos
         currentLine = self.words[elapsed_cycles]
@@ -115,7 +115,7 @@ class ATGReader():
             self.char_to_regex()
 
         elif parsing == "TOKENS":
-            self.tokens_to_regex()
+            self.tokens_to_regex(toClean)
             
         elif parsing == "KEYWORDS":
             self.keyword_to_regex()
@@ -206,22 +206,22 @@ class ATGReader():
             self.keywords[key] = regex
             print("Final KEYWORD", regex)
 
-    def tokens_to_regex(self):
+    def tokens_to_regex(self, toClean):
         keys = self.tokens.keys()
         isExcept = False
         for key in keys:
             val = self.tokens[key]
             print("Processed TOKENS", val)
-            #complejos {} []
+            #complejos {} [a{b{c}}] a|b[c]
             reduced = utils.complex_operators_eval(val)
 
             while reduced.find("}") > -1 or reduced.find("]") > -1:
                 reduced = utils.complex_operators_eval(reduced)
             #simples |
             translated = utils.simple_operators(reduced)
-            #identificar variables
+            #identificar variables (letters)*|(digits)*
             identified, isExcept = utils.identifier(translated, self.characters)
-            clean = utils.cleaner(identified, key, self.compilerName)
+            clean = utils.cleaner(identified, key, toClean)
             
 
             
